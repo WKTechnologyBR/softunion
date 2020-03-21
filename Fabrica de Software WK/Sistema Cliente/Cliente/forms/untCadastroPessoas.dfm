@@ -129,6 +129,7 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
       inherited Panel3: TPanel
         Top = 344
         Width = 584
+        TabOrder = 8
         ExplicitTop = 344
         ExplicitWidth = 584
         inherited btnSalvar: TButton
@@ -147,16 +148,16 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
         Height = 21
         Date = 43902.000000000000000000
         Time = 0.822922442130220600
-        TabOrder = 3
+        TabOrder = 2
       end
       object cbEnderecos: TComboBox
-        Left = 188
-        Top = 151
+        Left = 189
+        Top = 153
         Width = 357
         Height = 21
         Hint = 'ENDERECOS'
         Style = csDropDownList
-        TabOrder = 4
+        TabOrder = 3
       end
       object cbTipoPessoa: TComboBox
         Left = 40
@@ -165,7 +166,7 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
         Height = 21
         Style = csDropDownList
         ItemIndex = 0
-        TabOrder = 5
+        TabOrder = 4
         Text = 'Pessoa F'#237'sica'
         OnCloseUp = cbTipoPessoaCloseUp
         Items.Strings = (
@@ -178,7 +179,7 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
         Width = 143
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtRazaoSocial: TEdit
         Left = 188
@@ -186,42 +187,42 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
         Width = 214
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 7
+        TabOrder = 6
         Visible = False
       end
       object edtNomeFantasia: TEdit
-        Left = 188
-        Top = 199
+        Left = 189
+        Top = 201
         Width = 357
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 8
+        TabOrder = 7
         Visible = False
       end
       object Panel4: TPanel
-        Left = 188
-        Top = 13
+        Left = 232
+        Top = 27
         Width = 262
-        Height = 49
+        Height = 46
         BevelOuter = bvNone
         TabOrder = 9
         object Label6: TLabel
           Left = 145
-          Top = 9
+          Top = 3
           Width = 24
           Height = 13
           Caption = 'Sexo'
         end
         object Label9: TLabel
           Left = 2
-          Top = 9
+          Top = 1
           Width = 55
           Height = 13
           Caption = 'Estado C'#237'vil'
         end
         object cbSexo: TComboBox
           Left = 145
-          Top = 26
+          Top = 20
           Width = 101
           Height = 21
           Hint = 'SEXO'
@@ -230,7 +231,7 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
         end
         object cbEstadoCivil: TComboBox
           Left = 2
-          Top = 26
+          Top = 20
           Width = 137
           Height = 21
           Hint = 'ESTADO_CIVIL'

@@ -1,9 +1,9 @@
 object ServerModule: TServerModule
   OldCreateOrder = False
+  OnCreate = ServerMethodDataModuleCreate
   Encoding = esASCII
-  OnWelcomeMessage = ServerMethodDataModuleWelcomeMessage
-  Height = 176
-  Width = 267
+  Height = 296
+  Width = 447
   object DWServerEvents1: TDWServerEvents
     IgnoreInvalidParams = False
     Events = <
@@ -41,6 +41,34 @@ object ServerModule: TServerModule
         JsonMode = jmDataware
         Name = 'Gravar'
         OnReplyEvent = DWServerEvents1EventsGravarReplyEvent
+      end
+      item
+        Routes = [crAll]
+        DWParams = <
+          item
+            TypeObject = toParam
+            ObjectDirection = odIN
+            ObjectValue = ovString
+            ParamName = 'SQL'
+            Encoded = True
+          end
+          item
+            TypeObject = toParam
+            ObjectDirection = odOUT
+            ObjectValue = ovString
+            ParamName = 'Result'
+            Encoded = True
+          end
+          item
+            TypeObject = toParam
+            ObjectDirection = odINOUT
+            ObjectValue = ovString
+            ParamName = 'Tabela'
+            Encoded = True
+          end>
+        JsonMode = jmDataware
+        Name = 'GravarUsuario'
+        OnReplyEvent = DWServerEvents1EventsGravarUsuarioReplyEvent
       end
       item
         Routes = [crAll]
@@ -153,8 +181,29 @@ object ServerModule: TServerModule
         JsonMode = jmDataware
         Name = 'Atualizar'
         OnReplyEvent = DWServerEvents1EventsAtualizarReplyEvent
+      end
+      item
+        Routes = [crAll]
+        DWParams = <
+          item
+            TypeObject = toParam
+            ObjectDirection = odIN
+            ObjectValue = ovString
+            ParamName = 'Nome'
+            Encoded = True
+          end
+          item
+            TypeObject = toParam
+            ObjectDirection = odIN
+            ObjectValue = ovString
+            ParamName = 'Token'
+            Encoded = True
+          end>
+        JsonMode = jmPureJSON
+        Name = 'Cidades'
+        OnReplyEvent = DWServerEvents1EventsCidadesReplyEvent
       end>
-    Left = 160
+    Left = 192
     Top = 88
   end
   object RESTDWPoolerDB1: TRESTDWPoolerDB
@@ -166,7 +215,7 @@ object ServerModule: TServerModule
     Active = True
     PoolerOffMessage = 'RESTPooler not active.'
     ParamCreate = True
-    Left = 160
+    Left = 192
     Top = 24
   end
   object FDMemTable1: TFDMemTable
@@ -181,8 +230,21 @@ object ServerModule: TServerModule
     Top = 88
   end
   object FDConnection1: TFDConnection
+    Params.Strings = (
+      'DriverID=FB'
+      'User_Name=sysdba'
+      'Password=masterkey')
     LoginPrompt = False
     Left = 40
     Top = 24
+  end
+  object FDPhysFBDriverLink1: TFDPhysFBDriverLink
+    Left = 336
+    Top = 24
+  end
+  object FDGUIxWaitCursor1: TFDGUIxWaitCursor
+    Provider = 'Forms'
+    Left = 336
+    Top = 88
   end
 end

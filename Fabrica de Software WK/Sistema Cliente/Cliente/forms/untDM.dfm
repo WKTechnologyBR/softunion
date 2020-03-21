@@ -1,7 +1,7 @@
 object DM: TDM
   OldCreateOrder = False
   Height = 256
-  Width = 501
+  Width = 270
   object DWClientEvents1: TDWClientEvents
     ServerEventName = 'TServerModule.DWServerEvents1'
     CriptOptions.Use = False
@@ -41,6 +41,33 @@ object DM: TDM
           end>
         JsonMode = jmDataware
         Name = 'Gravar'
+      end
+      item
+        Routes = [crAll]
+        DWParams = <
+          item
+            TypeObject = toParam
+            ObjectDirection = odIN
+            ObjectValue = ovString
+            ParamName = 'SQL'
+            Encoded = True
+          end
+          item
+            TypeObject = toParam
+            ObjectDirection = odOUT
+            ObjectValue = ovString
+            ParamName = 'Result'
+            Encoded = True
+          end
+          item
+            TypeObject = toParam
+            ObjectDirection = odINOUT
+            ObjectValue = ovString
+            ParamName = 'Tabela'
+            Encoded = True
+          end>
+        JsonMode = jmDataware
+        Name = 'GravarUsuario'
       end
       item
         Routes = [crAll]
@@ -158,7 +185,7 @@ object DM: TDM
     DataCompression = True
     Encoding = esUtf8
     hEncodeStrings = True
-    Host = '192.168.0.11'
+    Host = '192.168.0.10'
     UserName = 'admin'
     Password = 'admin'
     ProxyOptions.BasicAuthentication = False
@@ -173,6 +200,9 @@ object DM: TDM
     BinaryRequest = False
     CriptOptions.Use = False
     CriptOptions.Key = 'RDWBASEKEY256'
+    UserAgent = 
+      'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, l' +
+      'ike Gecko) Chrome/41.0.2227.0 Safari/537.36'
     Left = 112
     Top = 96
   end
@@ -186,32 +216,5 @@ object DM: TDM
     UpdateOptions.AutoCommitUpdates = True
     Left = 112
     Top = 32
-  end
-  object ClientSQL1: TRESTDWClientSQL
-    Active = False
-    Filtered = False
-    FieldDefs = <>
-    IndexDefs = <>
-    FetchOptions.AssignedValues = [evMode]
-    FetchOptions.Mode = fmAll
-    ResourceOptions.AssignedValues = [rvSilentMode]
-    ResourceOptions.SilentMode = True
-    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
-    UpdateOptions.CheckRequired = False
-    UpdateOptions.AutoCommitUpdates = True
-    StoreDefs = True
-    MasterCascadeDelete = True
-    BinaryRequest = False
-    Datapacks = -1
-    DataCache = False
-    Params = <>
-    CacheUpdateRecords = True
-    AutoCommitData = False
-    AutoRefreshAfterCommit = False
-    RaiseErrors = True
-    ActionCursor = crSQLWait
-    ReflectChanges = False
-    Left = 280
-    Top = 96
   end
 end

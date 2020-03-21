@@ -4,8 +4,8 @@ object frmPrincipal: TfrmPrincipal
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Sistema Cliente - Server'
-  ClientHeight = 218
-  ClientWidth = 284
+  ClientHeight = 196
+  ClientWidth = 311
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,29 +18,29 @@ object frmPrincipal: TfrmPrincipal
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 48
-    Top = 45
+    Left = 56
+    Top = 29
     Width = 26
     Height = 13
     Caption = 'Porta'
   end
   object Label2: TLabel
-    Left = 48
-    Top = 93
+    Left = 56
+    Top = 77
     Width = 36
     Height = 13
     Caption = 'Usu'#225'rio'
   end
   object Label3: TLabel
-    Left = 48
-    Top = 141
+    Left = 56
+    Top = 125
     Width = 30
     Height = 13
     Caption = 'Senha'
   end
   object edtPorta: TEdit
-    Left = 48
-    Top = 64
+    Left = 56
+    Top = 48
     Width = 57
     Height = 21
     NumbersOnly = True
@@ -48,8 +48,8 @@ object frmPrincipal: TfrmPrincipal
     Text = '8082'
   end
   object Button1: TButton
-    Left = 118
-    Top = 62
+    Left = 126
+    Top = 46
     Width = 123
     Height = 25
     Caption = 'Button1'
@@ -57,16 +57,16 @@ object frmPrincipal: TfrmPrincipal
     OnClick = Button1Click
   end
   object edtUsuario: TEdit
-    Left = 48
-    Top = 112
+    Left = 56
+    Top = 96
     Width = 193
     Height = 21
     TabOrder = 2
     Text = 'admin'
   end
   object edtSenha: TEdit
-    Left = 48
-    Top = 160
+    Left = 56
+    Top = 144
     Width = 193
     Height = 21
     PasswordChar = '*'
@@ -100,7 +100,7 @@ object frmPrincipal: TfrmPrincipal
     CriptOptions.Use = False
     CriptOptions.Key = 'RDWBASEKEY256'
     MultiCORE = False
-    Left = 120
-    Top = 112
+    Left = 128
+    Top = 96
   end
 end

@@ -63,7 +63,7 @@ type
     procedure PreencherComboBox;
     procedure OcultarSheets(PageControl: TPageControl);
     procedure Listar(SQL_TEXTO: String);
-    procedure GravarServidor(aTabela: String);
+    procedure GravarServidor(aTabela: String; aTipoGravar: String = 'Gravar');
     procedure AtualizarServidor(aTabela: String; aID: String);
     procedure DeletarServidor(aTabela: String; aID: String);
 //    function GeraCodigo(SQL_TEXTO: String): String;
@@ -112,7 +112,6 @@ begin
     dwParams.ItemsString['Result'].AsString := JSONValue.ToJSON;
     dwParams.ItemsString['Tabela'].AsString := aTabela;
     dwParams.ItemsString['ID'].AsString     := aID;
-    dwParams.ItemsString['Token'].AsString  := DM.Token;
     DM.DWClientEvents1.SendEvent('Atualizar', dwParams, vErrorMessage);
 
     if vErrorMessage = '' then
@@ -156,7 +155,6 @@ begin
     DM.DWClientEvents1.CreateDWParams('Deletar', dwParams);
     dwParams.ItemsString['Tabela'].AsString := aTabela;
     dwParams.ItemsString['ID'].AsString     := aID;
-    dwParams.ItemsString['Token'].AsString  := DM.Token;
     DM.DWClientEvents1.SendEvent('Deletar', dwParams, vErrorMessage);
 
     if vErrorMessage = '' then
@@ -171,7 +169,7 @@ begin
   end;
 end;
 
-procedure TfrmPadrao.GravarServidor(aTabela: String);
+procedure TfrmPadrao.GravarServidor(aTabela: String; aTipoGravar: String = 'Gravar');
 var
   JSONValue     : TJSONValue;
   dwParams      : TDWParams;
@@ -187,11 +185,14 @@ begin
     JSONValue.JsonMode := jmDataware;
     JSONValue.LoadFromDataset('', FDMTPadrao, False,  JSONValue.JsonMode);
 
-    DM.DWClientEvents1.CreateDWParams('Gravar', dwParams);
+    DM.DWClientEvents1.CreateDWParams(aTipoGravar, dwParams);
     dwParams.ItemsString['Result'].AsString := JSONValue.ToJSON;
     dwParams.ItemsString['Tabela'].AsString := aTabela;
-    dwParams.ItemsString['Token'].AsString  := DM.Token;
-    DM.DWClientEvents1.SendEvent('Gravar', dwParams, vErrorMessage);
+
+    if aTipoGravar = 'Gravar' then
+      dwParams.ItemsString['Token'].AsString  := DM.TOKEN;
+
+    DM.DWClientEvents1.SendEvent(aTipoGravar, dwParams, vErrorMessage);
 
     if vErrorMessage = '' then
     begin
@@ -220,74 +221,67 @@ procedure TfrmPadrao.Listar(SQL_TEXTO: String);
 var
   JSONValue     : TJSONValue;
   dwParams      : TDWParams;
-  vJSONRet : String;
+  vErrorMessage : String;
   aFDQuery: TFDQuery;
   I: Integer;
-
-  ClientSQL: TRESTDWClientSQL;
+  RDWClientSQL: TRESTDWClientSQL;
 begin
   try
-    JSONValue     := Nil;
-    dwParams      := Nil;
-    vJSONRet := '';
-    aFDQuery      := Nil;
-    ClientSQL    := Nil;
-
-    FDMemTable1.Close;
-    FDMemTable1.CreateDataSet;
+    RDWClientSQL  :=  Nil;
+    JSONValue     :=  Nil;
+    dwParams      :=  Nil;
+    vErrorMessage :=  '';
+    aFDQuery      :=  Nil;
 
     if Trim(SQL_TEXTO) <> '' then
     begin
+      FDMemTable1.Close;
+      FDMemTable1.CreateDataSet;
+
       if DM.TestarConexaoServidorRDW then
       begin
-
-        ClientSQL:=TRESTDWClientSQL.Create(Nil);
-
+        RDWClientSQL  := TRESTDWClientSQL.Create(Nil);
         JSONValue     := TJSONValue.Create;
         try
           DM.DWClientEvents1.CreateDWParams('Retornar', dwParams);
           dwParams.ItemsString['SQL'].AsString  := SQL_TEXTO;
-          dwParams.ItemsString['Token'].AsString  := DM.Token;
-          DM.DWClientEvents1.SendEvent('Retornar', dwParams, vJSONRet);
+          dwParams.ItemsString['Token'].AsString  := DM.TOKEN;
+          DM.DWClientEvents1.SendEvent('Retornar', dwParams, vErrorMessage);
 
-          ClientSQL.OpenJson(vJSONRet);
+          //JSONValue.WriteToDataset(dtFull, dwParams.ItemsString['Result'].Value, DM.FDMemTable2);
+          RDWClientSQL.OpenJson(vErrorMessage);
 
-          //JSONValue.WriteToDataset(dtFull, dwParams.ItemsString['Result'].Value, ClientSQL);
-
-          ClientSQL.First;
-
-          if ClientSQL.RecordCount > 0 then
+          RDWClientSQL.First;
+          if RDWClientSQL.RecordCount > 0 then
           begin
-            ClientSQL.DisableControls;
+            RDWClientSQL.DisableControls;
             FDMemTable1.DisableControls;
-            while not ClientSQL.Eof do
+            while not RDWClientSQL.Eof do
             begin
               FDMemTable1.Append;
               for I := 0 to FDMemTable1.FieldCount - 1 do
               begin
-                FDMemTable1.Fields.Fields[I].AsString:=ClientSQL.Fields.Fields[I].AsString;
+                FDMemTable1.Fields.Fields[I].AsString:=RDWClientSQL.Fields.Fields[I].AsString;
               end;
               FDMemTable1.Post;
-              ClientSQL.Next
+              RDWClientSQL.Next
             end;
-            ClientSQL.EnableControls;
+            RDWClientSQL.EnableControls;
             FDMemTable1.EnableControls;
             FDMemTable1.First;
 
-            lblQuantidadeArtigos.Caption:='Quantidade de Itens: ' + IntToStr(FDMemTable1.RecordCount);
-
           end;
 
-          if vJSONRet = '' then
+          if vErrorMessage = '' then
           begin
-
+            lblQuantidadeArtigos.Caption:='Quantidade de Itens: ' + IntToStr(FDMemTable1.RecordCount);
           end;
 
         finally
           begin
             dwParams.DisposeOf;
             JSONValue.DisposeOf;
-            ClientSQL.DisposeOf;
+            RDWClientSQL.DisposeOf;
           end;
         end;
       end else ShowMessage('Sem conexão com o servidor.');

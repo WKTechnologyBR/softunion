@@ -1,7 +1,7 @@
 object frmPrincipal: TfrmPrincipal
   Left = 0
   Top = 0
-  Caption = 'Soft Union'
+  Caption = 'Sistema Cliente'
   ClientHeight = 498
   ClientWidth = 786
   Color = clBtnFace
@@ -10,7 +10,6 @@ object frmPrincipal: TfrmPrincipal
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  FormStyle = fsMDIForm
   Menu = MainMenu1
   OldCreateOrder = False
   WindowState = wsMaximized

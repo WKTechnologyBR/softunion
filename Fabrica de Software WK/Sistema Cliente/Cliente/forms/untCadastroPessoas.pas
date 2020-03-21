@@ -111,8 +111,8 @@ begin
   inherited;
   case cbTipoPessoa.ItemIndex of
     0:begin  //Pessoa física
-        Panel4.Left:= 186;
-        Panel4.Top := 173;
+        Panel4.Left:= cbEnderecos.Left;
+        Panel4.Top := cbEnderecos.Top + 33;
         Panel4.Visible:=True;
 
         lblNomeFantasia.Visible := False;
@@ -137,8 +137,8 @@ procedure TfrmCadastroPessoas.FormCreate(Sender: TObject);
 begin
   inherited;
   //Pessoa física
-  Panel4.Left:= 186;
-  Panel4.Top := 173;
+  Panel4.Left:= cbEnderecos.Left;
+  Panel4.Top := cbEnderecos.Top + 33;
   Panel4.Visible:=True;
   Listar(aSQLPadrao);
 end;

@@ -73,7 +73,7 @@ inherited frmCadastroUsuarios: TfrmCadastroUsuarios
         Width = 193
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 3
+        TabOrder = 2
       end
       object edtSenha: TEdit
         Left = 239
@@ -82,7 +82,7 @@ inherited frmCadastroUsuarios: TfrmCadastroUsuarios
         Height = 21
         CharCase = ecUpperCase
         PasswordChar = '*'
-        TabOrder = 2
+        TabOrder = 3
       end
     end
   end

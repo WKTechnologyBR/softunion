@@ -3,15 +3,6 @@ unit untPrincipal;
 interface
 
 uses
-  uDWJSONObject,
-  uDWConsts,
-  uDWDatamodule,
-  uRESTDWPoolerDB,
-  uRestDWDriverFD,
-  uDWAbout,
-  uRESTDWServerEvents,
-  uSystemEvents,
-
   Winapi.Windows,
   Winapi.Messages,
   System.SysUtils,
@@ -26,8 +17,7 @@ uses
   untCadastroCidade,
   untCadastroClientes,
   untCadastroUsuarios,
-  untCadastroEnderecos, Vcl.ComCtrls, untDM, untCadastroPessoas, Data.DB,
-  Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls;
+  untCadastroEnderecos, Vcl.ComCtrls, untDM, untCadastroPessoas;
 
 type
   TfrmPrincipal = class(TForm)
@@ -71,27 +61,30 @@ implementation
 
 procedure TfrmPrincipal.AbrirForm(FormClass: TComponentClass);
 begin
-  try
-    if Assigned(FormAtivo) then
-    begin
-      if FormAtivo.ClassType = FormClass then
-        Exit
-      else
+  if DM.TestarConexaoServidorRDW then
+  begin
+    try
+      if Assigned(FormAtivo) then
+      begin
+        if FormAtivo.ClassType = FormClass then
+          Exit
+        else
+        begin
+          FormAtivo.Destroy;
+          FormAtivo := Nil;
+        end;
+      end;
+      Application.CreateForm(FormClass, FormAtivo);
+      FormAtivo.Position := poMainFormCenter;
+      FormAtivo.ShowModal;
+
+    finally
       begin
         FormAtivo.Destroy;
         FormAtivo := Nil;
       end;
     end;
-    Application.CreateForm(FormClass, FormAtivo);
-    FormAtivo.Position := poMainFormCenter;
-    FormAtivo.ShowModal;
-
-  finally
-    begin
-      FormAtivo.Destroy;
-      FormAtivo := Nil;
-    end;
-  end;
+  end else ShowMessage('Sem conexão com o servidor.');
 
 end;
 

@@ -8,11 +8,6 @@ uses
 {$REGION 'Token'}
   EncdDecd,
   Clipbrd,
-  DCPbase64,
-  DCPcrypt2,
-  DCPsha256,
-  DCPsha512,
-  DCPconst,
 {$ENDREGION}
 
   Vcl.Forms,
@@ -64,7 +59,6 @@ type
   TToken = class
     public
       class function TokenValidar(aToken: String): Boolean;
-      class function TokenCriar(aUsuario, aSenha: String): String; overload;
       class function TokenCriar(aUsuario: String): String; overload;
     static;
   end;
@@ -84,6 +78,8 @@ type
     RESTDWPoolerDB1: TRESTDWPoolerDB;
     FDMemTable1: TFDMemTable;
     FDConnection1: TFDConnection;
+    FDPhysFBDriverLink1: TFDPhysFBDriverLink;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
     procedure DWServerEvents1EventsGravarReplyEvent(var Params: TDWParams;
       var Result: string);
     procedure ServerMethodDataModuleWelcomeMessage(Welcomemsg,
@@ -97,6 +93,9 @@ type
       var Result: string);
     procedure DWServerEvents1EventsGravarUsuarioReplyEvent(
       var Params: TDWParams; var Result: string);
+    procedure ServerMethodDataModuleCreate(Sender: TObject);
+    procedure DWServerEvents1EventsCidadesReplyEvent(var Params: TDWParams;
+      var Result: string);
   private
     { Private declarations }
   public
@@ -199,6 +198,58 @@ begin
     end;
   except on E: Exception do
     ShowMessage(E.Message);
+  end;
+end;
+
+procedure TServerModule.DWServerEvents1EventsCidadesReplyEvent(
+  var Params: TDWParams; var Result: string);
+var
+  JSONValue: TJSONValue;
+  I: Integer;
+  aFDQuery: TFDQuery;
+begin
+  JSONValue           := Nil;
+  aFDQuery            := Nil;
+
+  JSONValue           := TJSONValue.Create;
+  aFDQuery            := TFDQuery.Create(Nil);
+  aFDQuery.Connection := FDConnection1;
+
+  try
+    aFDQuery.Close;
+    aFDQuery.SQL.Clear;
+    aFDQuery.SQL.Add('SELECT TOKEN FROM USUARIOS WHERE TOKEN = :TOKEN');
+    aFDQuery.ParamByName('TOKEN').AsString:=Params.ItemsString['Token'].AsString;
+    aFDQuery.Open;
+
+    if aFDQuery.RecordCount > 0 then
+    begin
+      aFDQuery.Close;
+      aFDQuery.SQL.Clear;
+      aFDQuery.SQL.Add('SELECT * FROM CIDADES WHERE DS_CIDADES LIKE :DS_CIDADES');
+      aFDQuery.ParamByName('DS_CIDADES').AsString:='%' + Params.ItemsString['Nome'].AsString + '%';
+      aFDQuery.Open;
+
+      if aFDQuery.RecordCount > 0 then
+      begin
+        try
+          JSONValue.Encoding := Encoding;
+          JSONValue.Encoded  := False;
+          JSONValue.JsonMode := jmPureJSON;
+          JSONValue.LoadFromDataset('', aFDQuery, False,  JSONValue.JsonMode, 'dd/mm/yyyy', '.');
+          Result := JSONValue.ToJSON;
+        finally
+          JSONValue.Free;
+        end;
+      end;
+    end;
+
+    aFDQuery.DisposeOf;
+
+  except on E: Exception do
+    begin
+      Result:=('Erro: ' + E.Message);
+    end;
   end;
 end;
 
@@ -415,8 +466,8 @@ begin
       LoginPrompt := false;
       Params.Clear;
       Params.Values['DriverID']   := 'FB';
-      Params.Values['Protocol']   := TArquivoINI.LerIni('FIREBIRD', 'Protocol');
-      Params.Values['Server']     := TArquivoINI.LerIni('FIREBIRD', 'Server');
+      //Params.Values['Protocol']   := TArquivoINI.LerIni('FIREBIRD', 'Protocol');
+      //Params.Values['Server']     := TArquivoINI.LerIni('FIREBIRD', 'Server');
       Params.Values['Database']   := TArquivoINI.LerIni('FIREBIRD', 'Database');
       Params.Values['User_name']  := TArquivoINI.LerIni('FIREBIRD', 'User_name');
       Params.Values['Password']   := TArquivoINI.LerIni('FIREBIRD', 'Password');
@@ -524,8 +575,16 @@ begin
     aFDQuery.DisposeOf;
 
   except on E: Exception do
-    ShowMessage(E.Message);
+    begin
+      ShowMessage('Erro: ' + E.Message);
+      Clipboard.AsText:=E.Message;
+    end;
   end;
+end;
+
+procedure TServerModule.ServerMethodDataModuleCreate(Sender: TObject);
+begin
+  TArquivoINI.ConectarBanco(FDConnection1);
 end;
 
 procedure TServerModule.ServerMethodDataModuleWelcomeMessage(Welcomemsg,
@@ -535,91 +594,6 @@ begin
 end;
 
 { TToken }
-
-function RPad(x: string; c: Char; s: Integer): string;
-var
-  i: Integer;
-begin
-  Result := x;
-  if Length(x) < s then
-    for i := 1 to s-Length(x) do
-      Result := Result + c;
-end;
-
-function XorBlock(s, x: AnsiString): AnsiString; inline;
-var
-  i: Integer;
-begin
-  SetLength(Result, Length(s));
-  for i := 1 to Length(s) do
-    //Result[i] := Char(Byte(s[i]) xor Byte(x[i]));
-end;
-
-function CalcDigest(text: string; dig: TDCP_hashclass): string;
-var
-  x: TDCP_hash;
-begin
-  x := dig.Create(nil);
-  try
-    x.Init;
-    x.UpdateStr(text);
-    SetLength(Result, x.GetHashSize div 8);
-    x.Final(Result[1]);
-  finally
-    x.Free;
-  end;
-end;
-
-function CalcHMAC(message, key: string; hash: TDCP_hashclass): string;
-  function blocksize:Integer;
-  begin
-    if hash.GetId in [DCP_sha256, DCP_sha384, DCP_sha512] then begin
-      case hash.GetHashSize of
-        256:     Result:=64;
-        384,512: Result:=128;
-      end;
-
-    end else
-      raise exception.Create(hash.GetAlgorithm+' not supported!');
-  end;
-
-begin
-  // Definition RFC 2104
-  if Length(key) > blocksize then
-    key := CalcDigest(key, hash);
-  key := RPad(key, #0, blocksize);
-
-  Result := CalcDigest(XorBlock(key, RPad('', #$36, blocksize)) + message, hash);
-  Result := CalcDigest(XorBlock(key, RPad('', #$5c, blocksize)) + result, hash);
-end;
-
-class function TToken.TokenCriar(aUsuario, aSenha: String): String;
-var
-  payload, header, b64Header, b64payload, data: String;
-begin
-  header :=EncodeString('{ "alg": "HS384", "typ": "JWT" }');
-  payload:=EncodeString('{ "email": "' + aUsuario + '", "password": "' + aSenha + '" }');
-
-  b64Header  := StringReplace(header, '=', '', [rfReplaceAll]);
-  b64payload := StringReplace(payload, '=', '', [rfReplaceAll]);
-  Data       := b64Header + '.' + b64payload;
-
-  //Clipboard.AsText
-  Result:=data + '.'+StringReplace(
-                                   StringReplace(
-                                                 StringReplace(
-                                                               EncodeString(CalcHMAC(data,
-                                                               'adflajsdfDFaSDFasdfjasdfadfjafFDSWEdfjtppjncbewuqann', TDCP_sha384)),
-                                                               '+',
-                                                               '-',
-                                                               [rfReplaceAll]),
-                                                 '/',
-                                                 '_',
-                                                 [rfReplaceAll]),
-                                   '=',
-                                   '',
-                                   [rfReplaceAll]);
-end;
 
 class function TToken.TokenCriar(aUsuario: String): String;
 var

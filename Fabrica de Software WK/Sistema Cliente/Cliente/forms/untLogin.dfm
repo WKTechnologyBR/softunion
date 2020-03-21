@@ -4,7 +4,7 @@ object frmLogin: TfrmLogin
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Login'
-  ClientHeight = 236
+  ClientHeight = 228
   ClientWidth = 325
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,11 +17,11 @@ object frmLogin: TfrmLogin
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
-    Left = 18
+    Left = 19
     Top = 21
     Width = 36
     Height = 13
-    Caption = 'Usu'#225'rio'
+    Caption = 'Usuario'
   end
   object Label6: TLabel
     Left = 18
@@ -44,7 +44,6 @@ object frmLogin: TfrmLogin
     Height = 21
     CharCase = ecUpperCase
     TabOrder = 0
-    Text = 'LUCIVAL'
   end
   object edtSenha: TEdit
     Left = 18
@@ -54,36 +53,34 @@ object frmLogin: TfrmLogin
     CharCase = ecUpperCase
     PasswordChar = '*'
     TabOrder = 1
-    Text = 'L'
   end
   object Button1: TButton
     Left = 149
-    Top = 197
+    Top = 192
     Width = 75
     Height = 25
     Caption = 'Cancelar'
-    TabOrder = 2
+    TabOrder = 3
     OnClick = Button1Click
   end
   object Button2: TButton
     Left = 230
-    Top = 197
+    Top = 192
     Width = 75
     Height = 25
     Caption = 'Acessar'
     Default = True
-    TabOrder = 3
+    TabOrder = 4
     OnClick = Button2Click
   end
-  object Edit1: TEdit
+  object edtToken: TEdit
     Left = 18
     Top = 151
     Width = 287
     Height = 21
     CharCase = ecUpperCase
     PasswordChar = '*'
-    TabOrder = 4
-    Text = '8CCAD0E419DB5393'
+    TabOrder = 2
   end
   object FDMemTable1: TFDMemTable
     FetchOptions.AssignedValues = [evMode]

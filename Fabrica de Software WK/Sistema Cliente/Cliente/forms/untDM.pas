@@ -24,37 +24,94 @@ uses
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf,
   FireDAC.VCLUI.Wait, FireDAC.Phys.FBDef, FireDAC.Stan.Def, FireDAC.Stan.Pool,
   FireDAC.Phys, Data.DB, FireDAC.Comp.Client, FireDAC.Phys.IBBase,
-  FireDAC.Phys.FB, FireDAC.Comp.UI, FireDAC.Comp.DataSet, IdTCPClient,
-  uDWConstsData;
+  FireDAC.Phys.FB, FireDAC.Comp.UI, FireDAC.Comp.DataSet, IdTCPClient;
 
 type
   TDM = class(TDataModule)
     DWClientEvents1: TDWClientEvents;
     RESTClientPooler1: TRESTClientPooler;
     FDMemTable2: TFDMemTable;
-    ClientSQL1: TRESTDWClientSQL;
   private
     { Private declarations }
   public
     { Public declarations }
-    const
-      Token: String = '8CCAD0E419DB5393';
+    TOKEN: String;
 
     function ComboBoxRetornar(aCB: TComboBox): integer;
     procedure ListarDadosComboBox(CDS: TComboBox; SQL_TEXTO: String);
     function DeletarItens(aColuna, aTabelaExclusao, aTabelaVinculo, aCodigo: String): Boolean;
     //Validar servidor
     function TestarConexaoServidorRDW : boolean;
+
+    function Encode(const S: ansistring): ansistring;
+    function PostProcess(const S: ansistring): ansistring;
+    function InternalEncrypt(const S: ansistring; Key: Word): ansistring;
   end;
 
 var
   DM: TDM;
+
+const IP_SERVIDOR : String = '192.168.0.10';
+const PORTA_SERVIDOR: Integer = 8082;
 
 implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
+
+//Funções do UserControl
+function TDM.Encode(const S: ansistring): ansistring;
+const
+  Map: array [0 .. 63]
+    of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+var
+  I: longint;
+begin
+  I := 0;
+  Move(S[1], I, length(S));
+  case length(S) of
+    1:
+      Result := Map[I mod 64] + Map[(I shr 6) mod 64];
+    2:
+      Result := Map[I mod 64] + Map[(I shr 6) mod 64] + Map[(I shr 12) mod 64];
+    3:
+      Result := Map[I mod 64] + Map[(I shr 6) mod 64] + Map[(I shr 12) mod 64] +
+        Map[(I shr 18) mod 64];
+  end;
+end;
+
+function TDM.PostProcess(const S: ansistring): ansistring;
+var
+  SS: ansistring;
+begin
+  SS := S;
+  Result := '';
+  while SS <> '' do
+  begin
+    Result := Result + Encode(copy(SS, 1, 3));
+    Delete(SS, 1, 3);
+  end;
+  sleep(10);
+end;
+
+function TDM.InternalEncrypt(const S: ansistring; Key: Word): ansistring;
+var
+  I: Word;
+  Seed: int64;
+begin
+  Result := S;
+  Seed := Key;
+  for I := 1 to length(Result) do
+  begin
+{$IFNDEF VER180}
+    Result[I] := Ansichar(byte(Result[I]) xor (Seed shr 8));
+{$ELSE}
+    Result[I] := Char(byte(Result[I]) xor (Seed shr 8));
+{$ENDIF};
+    Seed := (byte(Result[I]) + Seed) * Word(52845) + Word(22719);
+  end;
+end;
 
 function TDM.ComboBoxRetornar(aCB: TComboBox): integer;
 begin
@@ -116,60 +173,69 @@ procedure TDM.ListarDadosComboBox(CDS: TComboBox; SQL_TEXTO: String);
 var
   JSONValue     : TJSONValue;
   dwParams      : TDWParams;
-  vJSONRet : String;
+  vErrorMessage : String;
   I: Integer;
-  ClientSQL: TRESTDWClientSQL;
+  RDWClientSQL: TRESTDWClientSQL;
 begin
-  try
-    JSONValue     := Nil;
-    dwParams      := Nil;
-    vJSONRet      := '';
-    ClientSQL     := Nil;
+  JSONValue     := Nil;
+  dwParams      := Nil;
+  vErrorMessage := '';
+  RDWClientSQL  :=  Nil;
 
-    if DM.TestarConexaoServidorRDW then
-    begin
-      ClientSQL := TRESTDWClientSQL.Create(Nil);
-      JSONValue := TJSONValue.Create;
-      try
-        //Recuperar dados no servidor conforme sql recebido
-        DM.DWClientEvents1.CreateDWParams('Retornar', dwParams);
-        dwParams.ItemsString['SQL'].AsString    := SQL_TEXTO;
-        dwParams.ItemsString['Token'].AsString  := Token;
-        DM.DWClientEvents1.SendEvent('Retornar', dwParams, vJSONRet);
+  if DM.TestarConexaoServidorRDW then
+  begin
+    RDWClientSQL  := TRESTDWClientSQL.Create(Nil);
+    JSONValue     := TJSONValue.Create;
+    try
+      //Recuperar dados no servidor conforme sql recebido
+      DM.DWClientEvents1.CreateDWParams('Retornar', dwParams);
+      dwParams.ItemsString['SQL'].AsString  := SQL_TEXTO;
+      dwParams.ItemsString['Token'].AsString  := TOKEN;
+      DM.DWClientEvents1.SendEvent('Retornar', dwParams, vErrorMessage);
 
-        ClientSQL.OpenJson(vJSONRet);
+      //JSONValue.WriteToDataset(dtFull, dwParams.ItemsString['Result'].Value, DM.FDMemTable2);
 
-        //Preencher combobox
-        if ClientSQL.RecordCount > 0 then
-        begin
-          CDS.Items.Clear;
-
-          ClientSQL.First;
-          ClientSQL.DisableControls;
-          while not ClientSQL.EOF do
+      RDWClientSQL.OpenJson(vErrorMessage);
+      if RDWClientSQL.RecordCount > 0 then
+      begin
+        try
+          //Preencher combobox
+          with RDWClientSQL do
           begin
-            CDS.Items.AddObject(ClientSQL.FieldByName('DS_PADRAO').AsString,
-            TObject(Pointer(ClientSQL.FieldByName('CD_PADRAO').AsInteger)));
-            ClientSQL.Next;
+            if RecordCount > 0 then
+            begin
+              CDS.Items.Clear;
+
+              First;
+              DisableControls;
+              while not EOF do
+              begin
+                CDS.Items.AddObject(FieldByName('DS_PADRAO').AsString,
+                TObject(Pointer(FieldByName('CD_PADRAO').AsInteger)));
+                Next;
+              end;
+              EnableControls;
+            end;
           end;
-          ClientSQL.EnableControls;
-        end;
 
-        if vJSONRet = '' then
-        begin
+        except on E: Exception do
 
         end;
 
-      finally
-        begin
-          dwParams.DisposeOf;
-          JSONValue.DisposeOf;
-          ClientSQL.DisposeOf;
-        end;
       end;
-    end else ShowMessage('Sem conexão com o servidor.');
-  except on E: Exception do
-  end;
+
+      if vErrorMessage = '' then
+      begin
+
+      end;
+
+    finally
+      begin
+        dwParams.DisposeOf;
+        JSONValue.DisposeOf;
+      end;
+    end;
+  end else ShowMessage('Sem conexão com o servidor.');
 end;
 
 function TDM.TestarConexaoServidorRDW: boolean;
@@ -183,8 +249,8 @@ begin
   Result := False;
   TCP    := TIdTCPClient.Create(nil);
   try
-    TCP.Host           := '192.168.0.11';
-    TCP.Port           := 8082;
+    TCP.Host           := IP_SERVIDOR;
+    TCP.Port           := PORTA_SERVIDOR;
     TCP.ReadTimeout    := 500;
     TCP.ConnectTimeout := 500;
     I                  := 0;

@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, untDM;
 
 type
   TfrmCadastroUsuarios = class(TfrmPadrao)
@@ -76,7 +76,7 @@ begin
   FDMTPadrao.Append;
   FDMTPadrao.FieldByName('NM_USUARIOS').AsString   := edtDescricao.Text;
   FDMTPadrao.FieldByName('USUARIO').AsString         := edtEmail.Text;
-  FDMTPadrao.FieldByName('SENHA').AsString         := edtSenha.Text;
+  FDMTPadrao.FieldByName('SENHA').AsString         := DM.PostProcess(DM.InternalEncrypt(edtSenha.Text, 0));
   FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime := Now;
   FDMTPadrao.FieldByName('IN_ATIVO').AsString      := 'S';
   FDMTPadrao.Post;
@@ -91,7 +91,7 @@ begin
         else
         begin
           //Inserir os dados no banco
-          GravarServidor('USUARIOS');
+          GravarServidor('USUARIOS', 'GravarUsuario');
 
           edtCodigo.Text    := '';
           edtDescricao.Text := '';

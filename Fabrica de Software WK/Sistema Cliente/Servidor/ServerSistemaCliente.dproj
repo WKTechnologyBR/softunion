@@ -113,9 +113,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="C:\Program Files (x86)\Embarcadero\Studio\Componentes\DCPcrypt-master\DCPbase64.pas"/>
-        <DCCReference Include="C:\Program Files (x86)\Embarcadero\Studio\Componentes\DCPcrypt-master\DCPconst.pas"/>
-        <DCCReference Include="C:\Program Files (x86)\Embarcadero\Studio\Componentes\DCPcrypt-master\DCPcrypt2.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

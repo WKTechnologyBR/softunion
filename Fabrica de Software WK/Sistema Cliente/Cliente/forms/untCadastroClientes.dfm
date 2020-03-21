@@ -56,7 +56,6 @@ inherited frmCadastroClientes: TfrmCadastroClientes
           item
             Expanded = False
             FieldName = 'DS_ENDERECOS'
-            Width = -1
             Visible = False
           end
           item
@@ -188,6 +187,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
       inherited Panel3: TPanel
         Top = 347
         Width = 587
+        TabOrder = 9
         ExplicitTop = 347
         ExplicitWidth = 587
         inherited btnSalvar: TButton
@@ -209,7 +209,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
         Width = 209
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 3
+        TabOrder = 2
       end
       object edtRG: TEdit
         Left = 255
@@ -217,7 +217,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
         Width = 290
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 4
+        TabOrder = 3
       end
       object edtCelular: TEdit
         Left = 186
@@ -225,7 +225,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
         Width = 140
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 5
+        TabOrder = 6
       end
       object edtTelefone: TEdit
         Left = 40
@@ -233,7 +233,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
         Width = 140
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtEmail: TEdit
         Left = 332
@@ -249,8 +249,8 @@ inherited frmCadastroClientes: TfrmCadastroClientes
         Width = 362
         Height = 21
         Hint = 'ENDERECOS'
-        TabOrder = 9
-        Text = 'cbEnderecos'
+        Style = csDropDownList
+        TabOrder = 4
       end
       object edtDataNascimento: TDateTimePicker
         Left = 408
