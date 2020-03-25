@@ -3,6 +3,7 @@ unit untPadrao;
 interface
 
 uses
+  REST.JSON,
   uDWJSONObject,
   uDWConsts,
   uDWDatamodule,
@@ -21,7 +22,7 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Phys, FireDAC.Phys.IBBase,
   FireDAC.Phys.FB, FireDAC.Comp.UI, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Buttons,
   Vcl.ComCtrls, Vcl.ToolWin, frxDBSet, frxExportPDF, frxClass, Vcl.Grids,
-  Vcl.DBGrids;
+  Vcl.DBGrids, ClasseCadastro;
 
 type
   TfrmPadrao = class(TForm)
@@ -64,6 +65,7 @@ type
     procedure OcultarSheets(PageControl: TPageControl);
     procedure Listar(SQL_TEXTO: String);
     procedure GravarServidor(aTabela: String; aTipoGravar: String = 'Gravar');
+    procedure GravarServidorJson(aObject: TObject; aTabela: String; aTipoGravar: String = 'Gravar');
     procedure AtualizarServidor(aTabela: String; aID: String);
     procedure DeletarServidor(aTabela: String; aID: String);
 //    function GeraCodigo(SQL_TEXTO: String): String;
@@ -203,6 +205,36 @@ begin
     begin
       dwParams.DisposeOf;
       JSONValue.DisposeOf;
+    end;
+  end;
+end;
+
+procedure TfrmPadrao.GravarServidorJson(aObject: TObject; aTabela: String; aTipoGravar: String = 'Gravar');
+var
+  dwParams      : TDWParams;
+  vErrorMessage : String;
+begin
+  dwParams      := Nil;
+  vErrorMessage := '';
+
+  try
+    DM.DWClientEvents1.CreateDWParams(aTipoGravar, dwParams);
+    dwParams.ItemsString['Result'].AsString := TJson.ObjectToJsonString(aObject);
+    dwParams.ItemsString['Tabela'].AsString := aTabela;
+
+    if aTipoGravar = 'Gravar' then
+      dwParams.ItemsString['Token'].AsString  := DM.TOKEN;
+
+    DM.DWClientEvents1.SendEvent(aTipoGravar, dwParams, vErrorMessage);
+
+    if vErrorMessage = '' then
+    begin
+      //Não ocorreu erro no servidor, limpar campos
+    end;
+
+  finally
+    begin
+      dwParams.DisposeOf;
     end;
   end;
 end;

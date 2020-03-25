@@ -3,12 +3,13 @@ unit untCadastroCidade;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
-  Vcl.ComCtrls, untDM;
+  Vcl.ComCtrls, untDM, ClasseCadastro;
 
 type
   TfrmCadastroCidade = class(TfrmPadrao)
@@ -30,13 +31,11 @@ type
 var
   frmCadastroCidade: TfrmCadastroCidade;
 
-const aSQLPadrao: String = 'SELECT '+
-                           'C.CD_CIDADES CD_CADASTRO, '+
-                           'C.DS_CIDADES DS_CADASTRO, '+
-                           'E.DS_ESTADOS '+
-                           'FROM CIDADES C '+
-                           'LEFT JOIN ESTADOS E ON E.CD_ESTADOS = C.CD_ESTADOS '+
-                           'ORDER BY DS_CIDADES';
+const
+  aSQLPadrao: String = 'SELECT ' + 'C.CD_CIDADES CD_CADASTRO, ' +
+    'C.DS_CIDADES DS_CADASTRO, ' + 'E.DS_ESTADOS ' + 'FROM CIDADES C ' +
+    'LEFT JOIN ESTADOS E ON E.CD_ESTADOS = C.CD_ESTADOS ' +
+    'ORDER BY DS_CIDADES';
 
 implementation
 
@@ -45,26 +44,26 @@ implementation
 procedure TfrmCadastroCidade.btnDeletarClick(Sender: TObject);
 begin
   inherited;
-  case Application.MessageBox(Pchar(
-    'O item será excluído definitivamente!'), 'Aviso do Sistema!', MB_YESNO) of
-    IDYES  :
-    begin
+  case Application.MessageBox(Pchar('O item será excluído definitivamente!'),
+    'Aviso do Sistema!', MB_YESNO) of
+    IDYES:
+      begin
         DeletarServidor('CIDADES', edtCodigo.Text);
-        PageControl1.ActivePage:=tabPrincipal;
+        PageControl1.ActivePage := tabPrincipal;
         Listar(aSQLPadrao);
-    end;
+      end;
 
-    IDNO :
-    begin
+    IDNO:
+      begin
 
-    end;
+      end;
   end;
 end;
 
 procedure TfrmCadastroCidade.btnNovoRegistroClick(Sender: TObject);
 begin
   inherited;
-  cbEstados.ItemIndex:=-1;
+  cbEstados.ItemIndex := -1;
 end;
 
 procedure TfrmCadastroCidade.btnSalvarClick(Sender: TObject);
@@ -86,15 +85,17 @@ begin
 
   try
     GravarRegistro;
-  except on e:exception do
-    MessageDlg(e.message, mtError, [mbOk], 0);
+  except
+    on e: exception do
+      MessageDlg(e.message, mtError, [mbOk], 0);
   end;
 end;
 
 procedure TfrmCadastroCidade.DBGrid1DblClick(Sender: TObject);
 begin
   inherited;
-  cbEstados.ItemIndex:=cbEstados.Items.IndexOf(FDMemTable1.FieldByName('DS_ESTADOS').AsString);
+  cbEstados.ItemIndex := cbEstados.Items.IndexOf
+    (FDMemTable1.FieldByName('DS_ESTADOS').AsString);
 end;
 
 procedure TfrmCadastroCidade.FormCreate(Sender: TObject);
@@ -104,60 +105,69 @@ begin
 end;
 
 procedure TfrmCadastroCidade.GravarRegistro;
+var
+  CCidades: TCidades;
 begin
-  FDMTPadrao.Close;
-  FDMTPadrao.FieldDefs.Clear;//Limpamos campos
-  FDMTPadrao.FieldDefs.Add('CD_ESTADOS', ftInteger);//adicionamos campos
-  FDMTPadrao.FieldDefs.Add('DS_CIDADES', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
-  FDMTPadrao.FieldDefs.Add('CD_USUARIO', ftInteger);
-  FDMTPadrao.CreateDataSet;
-
-  FDMTPadrao.Append;
-  FDMTPadrao.FieldByName('CD_ESTADOS').AsInteger   :=  DM.ComboBoxRetornar(cbEstados);
-  FDMTPadrao.FieldByName('DS_CIDADES').AsString    :=  edtDescricao.Text;
-  FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime :=  Now;
-  FDMTPadrao.FieldByName('CD_USUARIO').AsInteger   :=  1;
-  FDMTPadrao.Post;
-
+  CCidades := Nil;
+  CCidades := TCidades.Create;
   try
+    CCidades.FCD_ESTADOS := DM.ComboBoxRetornar(cbEstados);
+    CCidades.FDS_CIDADES := edtDescricao.Text;
+    CCidades.FCD_USUARIO := 1;
+
+
+    // FDMTPadrao.Close;
+    // FDMTPadrao.FieldDefs.Clear;//Limpamos campos
+    // FDMTPadrao.FieldDefs.Add('CD_ESTADOS', ftInteger);//adicionamos campos
+    // FDMTPadrao.FieldDefs.Add('DS_CIDADES', ftString, 60, False);
+    // FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
+    // FDMTPadrao.FieldDefs.Add('CD_USUARIO', ftInteger);
+    // FDMTPadrao.CreateDataSet;
+    //
+    // FDMTPadrao.Append;
+    // FDMTPadrao.FieldByName('CD_ESTADOS').AsInteger   :=  DM.ComboBoxRetornar(cbEstados);
+    // FDMTPadrao.FieldByName('DS_CIDADES').AsString    :=  edtDescricao.Text;
+    // FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime :=  Now;
+    // FDMTPadrao.FieldByName('CD_USUARIO').AsInteger   :=  1;
+    // FDMTPadrao.Post;
 
     try
       if btnSalvar.Caption = 'Salvar' then
       begin
         if Trim(edtDescricao.Text) = '' then
-        ShowMessage('Digite uma descrição antes de prosseguir.')
+          ShowMessage('Digite uma descrição antes de prosseguir.')
         else
         begin
-          //Inserir os dados no banco
-          GravarServidor('CIDADES');
+          // Inserir os dados no banco
+          GravarServidorJson(CCidades, 'CIDADES');
 
-          edtCodigo.Text          := '';
-          edtDescricao.Text       := '';
-          cbEstados.ItemIndex     := -1;
+          edtCodigo.Text := '';
+          edtDescricao.Text := '';
+          cbEstados.ItemIndex := -1;
           PageControl1.ActivePage := tabPrincipal;
         end;
       end;
 
       if btnSalvar.Caption = 'Atualizar' then
       begin
-        //Verificar se o item existe no banco e se houve alteração a atualizado no banco
+        // Verificar se o item existe no banco e se houve alteração a atualizado no banco
         AtualizarServidor('CIDADES', edtCodigo.Text);
-        edtCodigo.Text      := '';
-        edtDescricao.Text   := '';
+        edtCodigo.Text := '';
+        edtDescricao.Text := '';
         cbEstados.ItemIndex := -1;
         PageControl1.ActivePage := tabPrincipal;
       end;
-    finally
 
+      Listar(aSQLPadrao);
+
+    except
+      on e: exception do
+      begin
+        ShowMessage(e.message);
+      end;
     end;
-
-    Listar(aSQLPadrao);
-
-  except on E: Exception do
-    begin
-      ShowMessage(E.Message);
-    end;
+  finally
+    CCidades.DisposeOf;
   end;
 end;
 

@@ -4,7 +4,7 @@ object frmPrincipal: TfrmPrincipal
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Sistema Cliente - Server'
-  ClientHeight = 196
+  ClientHeight = 192
   ClientWidth = 311
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

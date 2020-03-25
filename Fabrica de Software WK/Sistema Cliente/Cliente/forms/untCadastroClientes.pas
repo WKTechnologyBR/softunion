@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
-  Vcl.ComCtrls, untDM, Vcl.Buttons;
+  Vcl.ComCtrls, untDM, Vcl.Buttons, ClasseCadastro;
 
 type
   TfrmCadastroClientes = class(TfrmPadrao)
@@ -54,7 +54,7 @@ const aSQLPadrao: String = 'SELECT '+
                            'C.RG, '+
                            'E.DS_ENDERECOS, '+
                            //'C.DT_NASCIMENTO, '+
-                           'C.FONE, '+
+                           'C.TELEFONE, '+
                            'C.CELULAR, '+
                            'C.EMAIL '+
                            'FROM CLIENTES C '+
@@ -157,35 +157,50 @@ begin
 end;
 
 procedure TfrmCadastroClientes.GravarRegistro;
+var
+  CClientes: TClientes;
 begin
-  FDMTPadrao.Close;
-  FDMTPadrao.FieldDefs.Clear;//Limpamos campos
-  FDMTPadrao.FieldDefs.Add('NM_CLIENTES', ftString, 60, False); // adicionamos campos
-  FDMTPadrao.FieldDefs.Add('CPF', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('RG', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('CD_ENDERECOS', ftInteger);
-  FDMTPadrao.FieldDefs.Add('DT_NASCIMENTO', ftDate);
-  FDMTPadrao.FieldDefs.Add('FONE', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('CELULAR', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('EMAIL', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
-  FDMTPadrao.FieldDefs.Add('CD_USUARIOS', ftInteger);
-  FDMTPadrao.CreateDataSet;
-
-  FDMTPadrao.Append;
-  FDMTPadrao.FieldByName('NM_CLIENTES').AsString  := edtDescricao.Text;
-  FDMTPadrao.FieldByName('CPF').AsString           := edtCPF.Text;
-  FDMTPadrao.FieldByName('RG').AsString            := edtRG.Text;
-  FDMTPadrao.FieldByName('CD_ENDERECOS').AsInteger  := DM.ComboBoxRetornar(cbEnderecos);
-  FDMTPadrao.FieldByName('DT_NASCIMENTO').AsString := DateToStr(edtDataNascimento.Date);
-  FDMTPadrao.FieldByName('FONE').AsString          := edtTelefone.Text;
-  FDMTPadrao.FieldByName('CELULAR').AsString       := edtCelular.Text;
-  FDMTPadrao.FieldByName('EMAIL').AsString         := edtEmail.Text;
-  FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime := Now;
-  FDMTPadrao.FieldByName('CD_USUARIOS').AsInteger   := 1;
-  FDMTPadrao.Post;
-
+  CClientes:=Nil;
+  CClientes:=TClientes.Create;
   try
+    CClientes.FNM_CLIENTES:= edtDescricao.Text;
+    CClientes.FCPF := edtCPF.Text;
+    CClientes.FRG := edtRG.Text;
+    CClientes.FCD_ENDERECOS := DM.ComboBoxRetornar(cbEnderecos);
+    // CClientes.FDT_NASCIMENTO:= DateToStr(edtDataNascimento.Date);
+    CClientes.FTELEFONE := edtTelefone.Text;
+    CClientes.FCELULAR := edtCelular.Text;
+    CClientes.FEMAIL := edtEmail.Text;
+    // CClientes.FDT_REGISTRO:= Now;
+    CClientes.FCD_USUARIOS := 1;
+
+
+    // FDMTPadrao.Close;
+//    FDMTPadrao.FieldDefs.Clear;//Limpamos campos
+//    FDMTPadrao.FieldDefs.Add('NM_CLIENTES', ftString, 60, False); // adicionamos campos
+//    FDMTPadrao.FieldDefs.Add('CPF', ftString, 60, False);
+//    FDMTPadrao.FieldDefs.Add('RG', ftString, 60, False);
+//    FDMTPadrao.FieldDefs.Add('CD_ENDERECOS', ftInteger);
+//    FDMTPadrao.FieldDefs.Add('DT_NASCIMENTO', ftDate);
+//    FDMTPadrao.FieldDefs.Add('FONE', ftString, 60, False);
+//    FDMTPadrao.FieldDefs.Add('CELULAR', ftString, 60, False);
+//    FDMTPadrao.FieldDefs.Add('EMAIL', ftString, 60, False);
+//    FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
+//    FDMTPadrao.FieldDefs.Add('CD_USUARIOS', ftInteger);
+//    FDMTPadrao.CreateDataSet;
+
+//    FDMTPadrao.Append;
+//    FDMTPadrao.FieldByName('NM_CLIENTES').AsString    := edtDescricao.Text;
+//    FDMTPadrao.FieldByName('CPF').AsString            := edtCPF.Text;
+//    FDMTPadrao.FieldByName('RG').AsString             := edtRG.Text;
+//    FDMTPadrao.FieldByName('CD_ENDERECOS').AsInteger  := DM.ComboBoxRetornar(cbEnderecos);
+//    FDMTPadrao.FieldByName('DT_NASCIMENTO').AsString  := DateToStr(edtDataNascimento.Date);
+//    FDMTPadrao.FieldByName('FONE').AsString           := edtTelefone.Text;
+//    FDMTPadrao.FieldByName('CELULAR').AsString        := edtCelular.Text;
+//    FDMTPadrao.FieldByName('EMAIL').AsString          := edtEmail.Text;
+//    FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime  := Now;
+//    FDMTPadrao.FieldByName('CD_USUARIOS').AsInteger   := 1;
+//    FDMTPadrao.Post;
 
     try
       if btnSalvar.Caption = 'Salvar' then
@@ -195,7 +210,7 @@ begin
         else
         begin
           //Inserir os dados no banco
-          GravarServidor('CLIENTES');
+          GravarServidorJson(CClientes, 'CLIENTES');
 
           LimparCampos;
           PageControl1.ActivePage := tabPrincipal;
@@ -209,16 +224,15 @@ begin
         LimparCampos;
         PageControl1.ActivePage := tabPrincipal;
       end;
-    finally
 
+      Listar(aSQLPadrao);
+
+    except on E: Exception do
+      begin
+        ShowMessage(E.Message);
+      end;
     end;
-
-    Listar(aSQLPadrao);
-
-  except on E: Exception do
-    begin
-      ShowMessage(E.Message);
-    end;
+  finally
   end;
 end;
 

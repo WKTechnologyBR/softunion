@@ -4,6 +4,10 @@ inherited frmCadastroCidade: TfrmCadastroCidade
   TextHeight = 13
   inherited PageControl1: TPageControl
     inherited tabPrincipal: TTabSheet
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       inherited DBGrid1: TDBGrid
         Columns = <
           item
@@ -31,10 +35,6 @@ inherited frmCadastroCidade: TfrmCadastroCidade
       end
     end
     inherited tabEdicao: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       inherited Shape2: TShape
         ExplicitLeft = 5
         ExplicitTop = 7

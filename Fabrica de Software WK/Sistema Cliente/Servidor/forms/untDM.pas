@@ -53,7 +53,7 @@ uses
 
   System.SysUtils,
   System.Classes,
-  Data.DB;
+  Data.DB, uDWResponseTranslator, uDWConstsData;
 
 type
   TToken = class
@@ -304,7 +304,11 @@ var
   I, X, Y: Integer;
 
   aFDQuery: TFDQuery;
+  RESTDWClientSQL: TRESTDWClientSQL;
 begin
+  RESTDWClientSQL:=Nil;
+  RESTDWClientSQL:=TRESTDWClientSQL.Create(Nil);
+
   try
     JSONValue           := Nil;
     aFDQuery            := Nil;
@@ -323,11 +327,12 @@ begin
       JSONValue.Encoded   := False;
       JSONValue.JsonMode  := jmDataware;
 
-      FDMemTable1.Close;
-      JSONValue.WriteToDataset(dtFull, Params.ItemsString['Result'].Value, FDMemTable1);
-      FDMemTable1.CommitUpdates;
+      //FDMemTable1.Close;
+      //JSONValue.WriteToDataset(dtFull, Params.ItemsString['Result'].Value, FDMemTable1);
+      RESTDWClientSQL.OpenJson(Params.ItemsString['Result'].AsString);
+      //FDMemTable1.CommitUpdates;
 
-      if FDMemTable1.RecordCount > 0 then
+      if RESTDWClientSQL.RecordCount > 0 then
       begin
         aFDQuery.Close;
         aFDQuery.SQL.Clear;
@@ -338,10 +343,10 @@ begin
         if aFDQuery.RecordCount > 0 then
         begin
           //Gerar sql
-          for I := 0 to FDMemTable1.FieldCount - 1 do
+          for I := 0 to RESTDWClientSQL.FieldCount - 1 do
           begin
-            aSQL:=aSQL + FDMemTable1.FieldDefs.Items[I].Name + ', ';
-            bSQL:=bSQL + ':' + FDMemTable1.FieldDefs.Items[I].Name + ', ';
+            aSQL:=aSQL + RESTDWClientSQL.FieldDefs.Items[I].Name + ', ';
+            bSQL:=bSQL + ':' + RESTDWClientSQL.FieldDefs.Items[I].Name + ', ';
           end;
             cSQL:=    ('INSERT INTO ' + Params.ItemsString['Tabela'].AsString +
                       '(' + Copy(aSQL, 1, length(aSQL) - 2) +
@@ -351,21 +356,21 @@ begin
           aFDQuery.Close;
           aFDQuery.SQL.Clear;
           aFDQuery.SQL.Add(cSQL);
-          aFDQuery.Params.ArraySize:=FDMemTable1.RecordCount;
+          aFDQuery.Params.ArraySize:=RESTDWClientSQL.RecordCount;
 
-          FDMemTable1.First;
-          FDMemTable1.DisableControls;
-          for X:= 0 to FDMemTable1.RecordCount - 1 do
+          RESTDWClientSQL.First;
+          RESTDWClientSQL.DisableControls;
+          for X:= 0 to RESTDWClientSQL.RecordCount - 1 do
           begin
-            for Y := 0 to FDMemTable1.FieldCount - 1 do
+            for Y := 0 to RESTDWClientSQL.FieldCount - 1 do
             begin
-              aFDQuery.Params[Y].Values[X]:=FDMemTable1.Fields.Fields[Y].Value
+              aFDQuery.Params[Y].Values[X]:=RESTDWClientSQL.Fields.Fields[Y].Value;
             end;
 
-            FDMemTable1.Next;
+            RESTDWClientSQL.Next;
           end;
-          FDMemTable1.EnableControls;
-          aFDQuery.Execute(FDMemTable1.RecordCount);
+          RESTDWClientSQL.EnableControls;
+          aFDQuery.Execute(RESTDWClientSQL.RecordCount);
         end;
       end;
 
@@ -373,6 +378,7 @@ begin
       begin
         JSONValue.DisposeOf;
         aFDQuery.DisposeOf;
+        RESTDWClientSQL.DisposeOf;
       end;
     end;
   except on E: Exception do

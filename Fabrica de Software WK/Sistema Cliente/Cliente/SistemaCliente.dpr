@@ -1,8 +1,8 @@
 program SistemaCliente;
 
 uses
-  Controls, //Declarado devido ao uso da constante mrOk
-  SysUtils, //Declarado devido ao uso do método FreeAndNil
+  Controls,
+  SysUtils,
   Vcl.Forms,
   untPrincipal in 'forms\untPrincipal.pas' {frmPrincipal},
   untDM in 'forms\untDM.pas' {DM: TDataModule},
@@ -13,7 +13,8 @@ uses
   untCadastroEnderecos in 'forms\untCadastroEnderecos.pas' {frmCadastroEnderecos},
   untCadastroUsuarios in 'forms\untCadastroUsuarios.pas' {frmCadastroUsuarios},
   untCadastroPessoas in 'forms\untCadastroPessoas.pas' {frmCadastroPessoas},
-  untLogin in 'forms\untLogin.pas' {frmLogin};
+  untLogin in 'forms\untLogin.pas' {frmLogin},
+  ClasseCadastro in 'classes\ClasseCadastro.pas';
 
 {$R *.res}
 

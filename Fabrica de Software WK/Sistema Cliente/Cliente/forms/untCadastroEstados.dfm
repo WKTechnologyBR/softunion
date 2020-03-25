@@ -4,10 +4,6 @@ inherited frmCadastroEstados: TfrmCadastroEstados
   TextHeight = 13
   inherited PageControl1: TPageControl
     inherited tabPrincipal: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       inherited DBGrid1: TDBGrid
         Columns = <
           item
@@ -36,10 +32,6 @@ inherited frmCadastroEstados: TfrmCadastroEstados
       end
     end
     inherited tabEdicao: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel [4]
         Left = 392
         Top = 140

@@ -9,10 +9,11 @@ inherited frmCadastroClientes: TfrmCadastroClientes
   inherited PageControl1: TPageControl
     Width = 595
     Height = 407
-    ActivePage = tabEdicao
     ExplicitWidth = 595
     ExplicitHeight = 407
     inherited tabPrincipal: TTabSheet
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 587
       ExplicitHeight = 379
       inherited Panel1: TPanel
