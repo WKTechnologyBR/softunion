@@ -12,8 +12,6 @@ inherited frmCadastroClientes: TfrmCadastroClientes
     ExplicitWidth = 595
     ExplicitHeight = 407
     inherited tabPrincipal: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
       ExplicitWidth = 587
       ExplicitHeight = 379
       inherited Panel1: TPanel
@@ -30,7 +28,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
         Columns = <
           item
             Expanded = False
-            FieldName = 'CD_CADASTRO'
+            FieldName = 'CD_CLIENTES'
             ReadOnly = True
             Title.Caption = 'C'#243'digo'
             Width = 51
@@ -38,9 +36,9 @@ inherited frmCadastroClientes: TfrmCadastroClientes
           end
           item
             Expanded = False
-            FieldName = 'DS_CADASTRO'
+            FieldName = 'NM_CLIENTES'
             ReadOnly = True
-            Title.Caption = 'Clientes'
+            Title.Caption = 'Nome dos clientes'
             Width = 154
             Visible = True
           end
@@ -52,6 +50,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
           item
             Expanded = False
             FieldName = 'RG'
+            Width = 64
             Visible = True
           end
           item
@@ -264,26 +263,29 @@ inherited frmCadastroClientes: TfrmCadastroClientes
       end
     end
   end
-  inherited FDMemTable1: TFDMemTable
+  inherited FDMemTable1: TDWMemtable
+    object FDMemTable1CD_CLIENTES: TIntegerField
+      FieldName = 'CD_CLIENTES'
+    end
+    object FDMemTable1NM_CLIENTES: TStringField
+      FieldName = 'NM_CLIENTES'
+      Size = 60
+    end
     object FDMemTable1CPF: TStringField
       FieldName = 'CPF'
-      Size = 15
     end
     object FDMemTable1RG: TStringField
       FieldName = 'RG'
-      Size = 15
     end
     object FDMemTable1DS_ENDERECOS: TStringField
       FieldName = 'DS_ENDERECOS'
       Size = 60
     end
-    object FDMemTable1FONE: TStringField
-      FieldName = 'FONE'
-      Size = 15
+    object FDMemTable1TELEFONE: TStringField
+      FieldName = 'TELEFONE'
     end
     object FDMemTable1CELULAR: TStringField
       FieldName = 'CELULAR'
-      Size = 15
     end
     object FDMemTable1EMAIL: TStringField
       FieldName = 'EMAIL'

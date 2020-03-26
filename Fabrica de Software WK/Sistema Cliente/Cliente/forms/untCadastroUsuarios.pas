@@ -4,19 +4,19 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB, FireDAC.Stan.Intf,
-  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
-  Vcl.ComCtrls, untDM;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
+  Vcl.ComCtrls, untDM, ClasseCadastro, uDWDataset;
 
 type
   TfrmCadastroUsuarios = class(TfrmPadrao)
-    edtEmail: TEdit;
+    edtUsuario: TEdit;
     Label5: TLabel;
     edtSenha: TEdit;
     Label6: TLabel;
-    FDMemTable1EMAIL: TStringField;
+    FDMemTable1CD_USUARIOS: TIntegerField;
+    FDMemTable1NM_USUARIOS: TStringField;
+    FDMemTable1USUARIO: TStringField;
     FDMemTable1SENHA: TStringField;
     procedure FormCreate(Sender: TObject);
     procedure btnDeletarClick(Sender: TObject);
@@ -32,8 +32,8 @@ var
   frmCadastroUsuarios: TfrmCadastroUsuarios;
 
 const aSQLPadrao: String = 'SELECT '+
-                           'CD_USUARIOS CD_CADASTRO, '+
-                           'NM_USUARIOS DS_CADASTRO, '+
+                           'CD_USUARIOS, '+
+                           'NM_USUARIOS, '+
                            'USUARIO, '+
                            'SENHA '+
                            'FROM USUARIOS ';
@@ -61,27 +61,20 @@ begin
 end;
 
 procedure TfrmCadastroUsuarios.btnSalvarClick(Sender: TObject);
+var
+  CUsuarios: TUsuarios;
 begin
   inherited;
-
-  FDMTPadrao.Close;
-  FDMTPadrao.FieldDefs.Clear;//Limpamos campos
-  FDMTPadrao.FieldDefs.Add('NM_USUARIOS', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('USUARIO', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('SENHA', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
-  FDMTPadrao.FieldDefs.Add('IN_ATIVO', ftString, 1, False);
-  FDMTPadrao.CreateDataSet;
-
-  FDMTPadrao.Append;
-  FDMTPadrao.FieldByName('NM_USUARIOS').AsString   := edtDescricao.Text;
-  FDMTPadrao.FieldByName('USUARIO').AsString         := edtEmail.Text;
-  FDMTPadrao.FieldByName('SENHA').AsString         := DM.PostProcess(DM.InternalEncrypt(edtSenha.Text, 0));
-  FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime := Now;
-  FDMTPadrao.FieldByName('IN_ATIVO').AsString      := 'S';
-  FDMTPadrao.Post;
+  CUsuarios:=Nil;
+  CUsuarios:=TUsuarios.Create;
 
   try
+    CUsuarios.FNM_USUARIOS:= edtDescricao.Text;
+    CUsuarios.FUSUARIO:= edtUsuario.Text;
+    CUsuarios.FSENHA:= DM.PostProcess(DM.InternalEncrypt(edtSenha.Text, 0));
+    //CUsuarios.FDT_CADASTRO:= Now;
+    CUsuarios.FIN_ATIVO:= 'S';
+
 
     try
       if btnSalvar.Caption = 'Salvar' then
@@ -91,12 +84,12 @@ begin
         else
         begin
           //Inserir os dados no banco
-          GravarServidor('USUARIOS', 'GravarUsuario');
+          GravarServidorJson(CUsuarios, 'USUARIOS', 'GravarUsuario');
 
           edtCodigo.Text    := '';
           edtDescricao.Text := '';
           edtSenha.Text     := '';
-          edtEmail.Text     := '';
+          edtUsuario.Text     := '';
 
           PageControl1.ActivePage := tabPrincipal;
         end;
@@ -105,31 +98,32 @@ begin
       if btnSalvar.Caption = 'Atualizar' then
       begin
         //Verificar se o item existe no banco e se houve alteração a atualizado no banco
-        AtualizarServidor('USUARIOS', edtCodigo.Text);
+        AtualizarServidor(CUsuarios, 'USUARIOS', edtCodigo.Text);
         edtCodigo.Text    := '';
         edtDescricao.Text := '';
         edtSenha.Text     := '';
-        edtEmail.Text     := '';
+        edtUsuario.Text     := '';
         PageControl1.ActivePage := tabPrincipal;
       end;
-    finally
 
+      Listar(aSQLPadrao);
+
+    except on E: Exception do
+      begin
+        ShowMessage(E.Message);
+      end;
     end;
-
-    Listar(aSQLPadrao);
-
-  except on E: Exception do
-    begin
-      ShowMessage(E.Message);
-    end;
+  finally
+    CUsuarios.DisposeOf;
   end;
 end;
 
 procedure TfrmCadastroUsuarios.DBGrid1DblClick(Sender: TObject);
 begin
   inherited;
+  edtDescricao.Text := FDMemTable1.FieldByName('NM_USUARIOS').AsString;
   edtSenha.Text := FDMemTable1.FieldByName('SENHA').AsString;
-  edtEmail.Text := FDMemTable1.FieldByName('USUARIO').AsString;
+  edtUsuario.Text := FDMemTable1.FieldByName('USUARIO').AsString;
 end;
 
 procedure TfrmCadastroUsuarios.FormCreate(Sender: TObject);

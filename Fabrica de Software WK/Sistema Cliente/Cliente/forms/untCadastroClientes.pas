@@ -4,11 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB, FireDAC.Stan.Intf,
-  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
-  Vcl.ComCtrls, untDM, Vcl.Buttons, ClasseCadastro;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
+  Vcl.ComCtrls, untDM, Vcl.Buttons, ClasseCadastro,
+  uDWDataset;
 
 type
   TfrmCadastroClientes = class(TfrmPadrao)
@@ -26,10 +25,12 @@ type
     cbEnderecos: TComboBox;
     Label15: TLabel;
     edtDataNascimento: TDateTimePicker;
+    FDMemTable1CD_CLIENTES: TIntegerField;
+    FDMemTable1NM_CLIENTES: TStringField;
     FDMemTable1CPF: TStringField;
     FDMemTable1RG: TStringField;
     FDMemTable1DS_ENDERECOS: TStringField;
-    FDMemTable1FONE: TStringField;
+    FDMemTable1TELEFONE: TStringField;
     FDMemTable1CELULAR: TStringField;
     FDMemTable1EMAIL: TStringField;
     procedure FormCreate(Sender: TObject);
@@ -48,8 +49,8 @@ var
   frmCadastroClientes: TfrmCadastroClientes;
 
 const aSQLPadrao: String = 'SELECT '+
-                           'C.CD_CLIENTES CD_CADASTRO, '+
-                           'C.NM_CLIENTES DS_CADASTRO, '+
+                           'C.CD_CLIENTES, '+
+                           'C.NM_CLIENTES, '+
                            'C.CPF, '+
                            'C.RG, '+
                            'E.DS_ENDERECOS, '+
@@ -142,7 +143,8 @@ end;
 procedure TfrmCadastroClientes.DBGrid1DblClick(Sender: TObject);
 begin
   inherited;
-  edtCPF.Text           :=  FDMemTable1.FieldByName('CPF').AsString;
+  edtCodigo.Text        :=  FDMemTable1.FieldByName('CD_CLIENTES').AsString;
+  edtDescricao.Text     :=  FDMemTable1.FieldByName('DS_CLIENTES').AsString;
   edtRG.Text            :=  FDMemTable1.FieldByName('RG').AsString;
   cbEnderecos.ItemIndex :=  cbEnderecos.Items.IndexOf(FDMemTable1.FieldByName('DS_ENDERECOS').AsString);
   edtTelefone.Text      :=  FDMemTable1.FieldByName('FONE').AsString;
@@ -174,34 +176,6 @@ begin
     // CClientes.FDT_REGISTRO:= Now;
     CClientes.FCD_USUARIOS := 1;
 
-
-    // FDMTPadrao.Close;
-//    FDMTPadrao.FieldDefs.Clear;//Limpamos campos
-//    FDMTPadrao.FieldDefs.Add('NM_CLIENTES', ftString, 60, False); // adicionamos campos
-//    FDMTPadrao.FieldDefs.Add('CPF', ftString, 60, False);
-//    FDMTPadrao.FieldDefs.Add('RG', ftString, 60, False);
-//    FDMTPadrao.FieldDefs.Add('CD_ENDERECOS', ftInteger);
-//    FDMTPadrao.FieldDefs.Add('DT_NASCIMENTO', ftDate);
-//    FDMTPadrao.FieldDefs.Add('FONE', ftString, 60, False);
-//    FDMTPadrao.FieldDefs.Add('CELULAR', ftString, 60, False);
-//    FDMTPadrao.FieldDefs.Add('EMAIL', ftString, 60, False);
-//    FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
-//    FDMTPadrao.FieldDefs.Add('CD_USUARIOS', ftInteger);
-//    FDMTPadrao.CreateDataSet;
-
-//    FDMTPadrao.Append;
-//    FDMTPadrao.FieldByName('NM_CLIENTES').AsString    := edtDescricao.Text;
-//    FDMTPadrao.FieldByName('CPF').AsString            := edtCPF.Text;
-//    FDMTPadrao.FieldByName('RG').AsString             := edtRG.Text;
-//    FDMTPadrao.FieldByName('CD_ENDERECOS').AsInteger  := DM.ComboBoxRetornar(cbEnderecos);
-//    FDMTPadrao.FieldByName('DT_NASCIMENTO').AsString  := DateToStr(edtDataNascimento.Date);
-//    FDMTPadrao.FieldByName('FONE').AsString           := edtTelefone.Text;
-//    FDMTPadrao.FieldByName('CELULAR').AsString        := edtCelular.Text;
-//    FDMTPadrao.FieldByName('EMAIL').AsString          := edtEmail.Text;
-//    FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime  := Now;
-//    FDMTPadrao.FieldByName('CD_USUARIOS').AsInteger   := 1;
-//    FDMTPadrao.Post;
-
     try
       if btnSalvar.Caption = 'Salvar' then
       begin
@@ -220,7 +194,7 @@ begin
       if btnSalvar.Caption = 'Atualizar' then
       begin
         //Verificar se o item existe no banco e se houve alteração a atualizado no banco
-        AtualizarServidor('CLIENTES', edtCodigo.Text);
+        AtualizarServidor(CClientes, 'CLIENTES', edtCodigo.Text);
         LimparCampos;
         PageControl1.ActivePage := tabPrincipal;
       end;
@@ -233,6 +207,7 @@ begin
       end;
     end;
   finally
+    CClientes.DisposeOf;
   end;
 end;
 

@@ -4,11 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB, FireDAC.Stan.Intf,
-  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, Vcl.StdCtrls, Vcl.ComCtrls,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
-  Vcl.ExtCtrls, untDM;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB,
+  Vcl.Grids, Vcl.DBGrids,
+  Vcl.ExtCtrls, untDM, Datasnap.DBClient, ClasseCadastro, uDWDataset,
+  Vcl.StdCtrls, Vcl.ComCtrls;
 
 type
   TfrmCadastroPessoas = class(TfrmPadrao)
@@ -29,6 +28,19 @@ type
     Label6: TLabel;
     cbEstadoCivil: TComboBox;
     Label9: TLabel;
+    FDMemTable1CD_PESSOAS: TIntegerField;
+    FDMemTable1NM_PESSOAS: TStringField;
+    FDMemTable1DT_NASCIMENTO: TStringField;
+    FDMemTable1CD_SEXO: TIntegerField;
+    FDMemTable1CD_ENDERECOS: TIntegerField;
+    FDMemTable1CPF: TStringField;
+    FDMemTable1CD_ESTADO_CIVIL: TIntegerField;
+    FDMemTable1NM_FANTASIA: TStringField;
+    FDMemTable1CNPJ: TStringField;
+    FDMemTable1RAZAO_SOCIAL: TStringField;
+    FDMemTable1TIPO_PESSOA: TIntegerField;
+    FDMemTable1DT_REGISTRO: TStringField;
+    FDMemTable1CD_USUARIOS: TIntegerField;
     procedure btnSalvarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbTipoPessoaCloseUp(Sender: TObject);
@@ -43,7 +55,24 @@ type
 var
   frmCadastroPessoas: TfrmCadastroPessoas;
 
-const aSQLPadrao: String = 'SELECT CD_PESSOAS, NM_PESSOAS FROM PESSOAS';
+const aSQLPadrao: String = 'SELECT '+
+                           'P.CD_PESSOAS, '+
+                           'P.NM_PESSOAS, '+
+                           'P.DT_NASCIMENTO, '+
+                           'P.CD_SEXO, '+
+                           'S.DS_SEXO, '+
+                           'P.CD_ENDERECOS, '+
+                           'P.CPF, '+
+                           'P.CD_ESTADO_CIVIL, '+
+                           'P.NM_FANTASIA, '+
+                           'P.CNPJ, '+
+                           'P.RAZAO_SOCIAL, '+
+                           'P.TIPO_PESSOA, '+
+                           //'P.DT_REGISTRO, '+
+                           'P.CD_USUARIOS '+
+
+                           'FROM PESSOAS P ' +
+                           'LEFT JOIN SEXO S ON S.CD_SEXO = P.CD_SEXO ';
 
 implementation
 
@@ -144,55 +173,10 @@ begin
 end;
 
 procedure TfrmCadastroPessoas.GravarRegistro;
+var
+  CPessoas: TPessoas;
 begin
-  FDMTPadrao.Close;
-  FDMTPadrao.FieldDefs.Clear;//Limpamos campos
-  FDMTPadrao.FieldDefs.Add('NM_PESSOAS', ftString, 60, False); // adicionamos campos
-  FDMTPadrao.FieldDefs.Add('DT_NASCIMENTO', ftDate);
-  FDMTPadrao.FieldDefs.Add('CD_SEXO', ftInteger);
-  FDMTPadrao.FieldDefs.Add('CD_ENDERECOS', ftInteger);
-
-  case cbTipoPessoa.ItemIndex of
-    0:begin  //Pessoa física
-        FDMTPadrao.FieldDefs.Add('CPF', ftString, 60, False);
-        FDMTPadrao.FieldDefs.Add('CD_ESTADO_CIVIL', ftInteger);
-      end;
-
-    1:begin
-        FDMTPadrao.FieldDefs.Add('NM_FANTASIA', ftString, 60, False);
-        FDMTPadrao.FieldDefs.Add('CNPJ', ftString, 60, False);
-        FDMTPadrao.FieldDefs.Add('RAZAO_SOCIAL', ftString, 60, False);
-      end;
-  end;
-  FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
-  FDMTPadrao.FieldDefs.Add('CD_USUARIOS', ftInteger);
-  FDMTPadrao.CreateDataSet;
-
-  FDMTPadrao.Append;
-  FDMTPadrao.FieldByName('NM_PESSOAS').AsString     := edtDescricao.Text;
-  FDMTPadrao.FieldByName('DT_NASCIMENTO').AsString  := DateToStr(edtDataNascimento.Date);
-  FDMTPadrao.FieldByName('CD_SEXO').AsInteger       := DM.ComboBoxRetornar(cbSexo);
-  FDMTPadrao.FieldByName('CD_ENDERECOS').AsInteger  := DM.ComboBoxRetornar(cbEnderecos);
-
-  case cbTipoPessoa.ItemIndex of
-    0:begin  //Pessoa física
-        FDMTPadrao.FieldByName('CPF').AsString                := edtDescricao.Text;
-        FDMTPadrao.FieldByName('CD_ESTADO_CIVIL').AsInteger   := DM.ComboBoxRetornar(cbEstadoCivil);
-      end;
-
-    1:begin
-        FDMTPadrao.FieldByName('NM_FANTASIA').AsString  := edtDescricao.Text;
-        FDMTPadrao.FieldByName('CNPJ').AsString         := edtDescricao.Text;
-        FDMTPadrao.FieldByName('RAZAO_SOCIAL').AsString := edtDescricao.Text;
-      end;
-  end;
-  FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime  := Now;
-  FDMTPadrao.FieldByName('CD_USUARIOS').AsInteger   := 1;
-
-  FDMTPadrao.Post;
-
   try
-
     try
       if btnSalvar.Caption = 'Salvar' then
       begin
@@ -201,7 +185,7 @@ begin
         else
         begin
           //Inserir os dados no banco
-          GravarServidor('PESSOAS');
+          GravarServidorJson(CPessoas, 'PESSOAS');
 
           LimparCampos;
           PageControl1.ActivePage := tabPrincipal;
@@ -211,20 +195,20 @@ begin
       if btnSalvar.Caption = 'Atualizar' then
       begin
         //Verificar se o item existe no banco e se houve alteração a atualizado no banco
-        AtualizarServidor('PESSOAS', edtCodigo.Text);
+        AtualizarServidor(CPessoas, 'PESSOAS', edtCodigo.Text);
         LimparCampos;
         PageControl1.ActivePage := tabPrincipal;
       end;
-    finally
 
+      Listar(aSQLPadrao);
+
+    except on E: Exception do
+      begin
+        ShowMessage(E.Message);
+      end;
     end;
-
-    Listar(aSQLPadrao);
-
-  except on E: Exception do
-    begin
-      ShowMessage(E.Message);
-    end;
+  finally
+    CPessoas.DisposeOf;
   end;
 end;
 

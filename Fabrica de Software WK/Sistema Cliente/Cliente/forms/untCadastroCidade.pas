@@ -5,17 +5,18 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB, FireDAC.Stan.Intf,
-  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
-  Vcl.ComCtrls, untDM, ClasseCadastro;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
+  Vcl.ComCtrls, untDM, ClasseCadastro, uDWConstsData,
+  uRESTDWPoolerDB, uDWDataset;
 
 type
   TfrmCadastroCidade = class(TfrmPadrao)
     cbEstados: TComboBox;
     Label6: TLabel;
-    FDMemTable1ESTADO: TStringField;
+    FDMemTable1CD_CIDADES: TIntegerField;
+    FDMemTable1DS_CIDADES: TStringField;
+    FDMemTable1DS_ESTADOS: TStringField;
     procedure FormCreate(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
     procedure btnNovoRegistroClick(Sender: TObject);
@@ -32,10 +33,13 @@ var
   frmCadastroCidade: TfrmCadastroCidade;
 
 const
-  aSQLPadrao: String = 'SELECT ' + 'C.CD_CIDADES CD_CADASTRO, ' +
-    'C.DS_CIDADES DS_CADASTRO, ' + 'E.DS_ESTADOS ' + 'FROM CIDADES C ' +
-    'LEFT JOIN ESTADOS E ON E.CD_ESTADOS = C.CD_ESTADOS ' +
-    'ORDER BY DS_CIDADES';
+  aSQLPadrao: String ='SELECT ' +
+                      'C.CD_CIDADES, ' +
+                      'C.DS_CIDADES, ' +
+                      'E.DS_ESTADOS ' +
+                      'FROM CIDADES C ' +
+                      'LEFT JOIN ESTADOS E ON E.CD_ESTADOS = C.CD_ESTADOS ' +
+                      'ORDER BY DS_CIDADES';
 
 implementation
 
@@ -94,8 +98,9 @@ end;
 procedure TfrmCadastroCidade.DBGrid1DblClick(Sender: TObject);
 begin
   inherited;
-  cbEstados.ItemIndex := cbEstados.Items.IndexOf
-    (FDMemTable1.FieldByName('DS_ESTADOS').AsString);
+  edtCodigo.Text    :=  FDMemTable1.FieldByName('CD_CIDADES').AsString;
+  edtDescricao.Text :=  FDMemTable1.FieldByName('DS_CIDADES').AsString;
+  cbEstados.ItemIndex := cbEstados.Items.IndexOf(FDMemTable1.FieldByName('DS_ESTADOS').AsString);
 end;
 
 procedure TfrmCadastroCidade.FormCreate(Sender: TObject);
@@ -113,23 +118,7 @@ begin
   try
     CCidades.FCD_ESTADOS := DM.ComboBoxRetornar(cbEstados);
     CCidades.FDS_CIDADES := edtDescricao.Text;
-    CCidades.FCD_USUARIO := 1;
-
-
-    // FDMTPadrao.Close;
-    // FDMTPadrao.FieldDefs.Clear;//Limpamos campos
-    // FDMTPadrao.FieldDefs.Add('CD_ESTADOS', ftInteger);//adicionamos campos
-    // FDMTPadrao.FieldDefs.Add('DS_CIDADES', ftString, 60, False);
-    // FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
-    // FDMTPadrao.FieldDefs.Add('CD_USUARIO', ftInteger);
-    // FDMTPadrao.CreateDataSet;
-    //
-    // FDMTPadrao.Append;
-    // FDMTPadrao.FieldByName('CD_ESTADOS').AsInteger   :=  DM.ComboBoxRetornar(cbEstados);
-    // FDMTPadrao.FieldByName('DS_CIDADES').AsString    :=  edtDescricao.Text;
-    // FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime :=  Now;
-    // FDMTPadrao.FieldByName('CD_USUARIO').AsInteger   :=  1;
-    // FDMTPadrao.Post;
+    CCidades.FCD_USUARIO := DM.CD_USUARIO;
 
     try
       if btnSalvar.Caption = 'Salvar' then
@@ -151,7 +140,8 @@ begin
       if btnSalvar.Caption = 'Atualizar' then
       begin
         // Verificar se o item existe no banco e se houve alteração a atualizado no banco
-        AtualizarServidor('CIDADES', edtCodigo.Text);
+        AtualizarServidor(CCidades, 'CIDADES', edtCodigo.Text);
+
         edtCodigo.Text := '';
         edtDescricao.Text := '';
         cbEstados.ItemIndex := -1;

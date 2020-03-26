@@ -3,11 +3,17 @@ unit untLogin;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, untDM, FireDAC.Stan.Intf,
-  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  untDM, Vcl.ExtCtrls;
 
 type
   TfrmLogin = class(TForm)
@@ -17,9 +23,9 @@ type
     Label6: TLabel;
     Button1: TButton;
     Button2: TButton;
-    FDMemTable1: TFDMemTable;
     Label1: TLabel;
     edtToken: TEdit;
+    Image1: TImage;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
   private
@@ -64,7 +70,7 @@ begin
     try
       //Recuperar dados no servidor conforme sql recebido
       DM.DWClientEvents1.CreateDWParams('Retornar', dwParams);
-      dwParams.ItemsString['SQL'].AsString  := 'SELECT USUARIO, SENHA FROM USUARIOS '+
+      dwParams.ItemsString['SQL'].AsString  := 'SELECT CD_USUARIOS, USUARIO, SENHA FROM USUARIOS '+
                                                 'WHERE USUARIO = ' + QuotedStr(edtDescricao.Text);
       dwParams.ItemsString['Token'].AsString  := edtToken.Text;
       DM.DWClientEvents1.SendEvent('Retornar', dwParams, vErrorMessage);
@@ -89,6 +95,7 @@ begin
 
           ModalResult := mrOk;
           DM.TOKEN:=edtToken.Text;
+          DM.CD_USUARIO:=RDWClientSQL.FieldByName('CD_USUARIOS').AsInteger;
 
         except on E: Exception do
 

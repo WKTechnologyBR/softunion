@@ -4,8 +4,8 @@ object frmLogin: TfrmLogin
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Login'
-  ClientHeight = 228
-  ClientWidth = 325
+  ClientHeight = 266
+  ClientWidth = 346
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,83 +14,87 @@ object frmLogin: TfrmLogin
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
+  DesignSize = (
+    346
+    266)
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
-    Left = 19
-    Top = 21
+    Left = 35
+    Top = 117
     Width = 36
     Height = 13
     Caption = 'Usuario'
   end
   object Label6: TLabel
-    Left = 18
-    Top = 76
+    Left = 183
+    Top = 117
     Width = 30
     Height = 13
     Caption = 'Senha'
   end
   object Label1: TLabel
-    Left = 18
-    Top = 132
+    Left = 35
+    Top = 172
     Width = 29
     Height = 13
     Caption = 'Token'
   end
+  object Image1: TImage
+    Left = 34
+    Top = 6
+    Width = 292
+    Height = 105
+  end
   object edtDescricao: TEdit
-    Left = 18
-    Top = 40
-    Width = 287
+    Left = 34
+    Top = 136
+    Width = 143
     Height = 21
     CharCase = ecUpperCase
     TabOrder = 0
   end
   object edtSenha: TEdit
-    Left = 18
-    Top = 95
-    Width = 287
+    Left = 183
+    Top = 136
+    Width = 143
     Height = 21
     CharCase = ecUpperCase
     PasswordChar = '*'
     TabOrder = 1
   end
   object Button1: TButton
-    Left = 149
-    Top = 192
+    Left = 170
+    Top = 230
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Cancelar'
     TabOrder = 3
     OnClick = Button1Click
+    ExplicitLeft = 149
+    ExplicitTop = 192
   end
   object Button2: TButton
-    Left = 230
-    Top = 192
+    Left = 251
+    Top = 230
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Acessar'
     Default = True
     TabOrder = 4
     OnClick = Button2Click
+    ExplicitLeft = 230
+    ExplicitTop = 192
   end
   object edtToken: TEdit
-    Left = 18
-    Top = 151
+    Left = 35
+    Top = 191
     Width = 287
     Height = 21
     CharCase = ecUpperCase
     PasswordChar = '*'
     TabOrder = 2
-  end
-  object FDMemTable1: TFDMemTable
-    FetchOptions.AssignedValues = [evMode]
-    FetchOptions.Mode = fmAll
-    ResourceOptions.AssignedValues = [rvSilentMode]
-    ResourceOptions.SilentMode = True
-    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
-    UpdateOptions.CheckRequired = False
-    UpdateOptions.AutoCommitUpdates = True
-    Left = 112
-    Top = 32
   end
 end

@@ -26,6 +26,23 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
       inherited DBGrid1: TDBGrid
         Width = 574
         Height = 277
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'CD_PESSOAS'
+            ReadOnly = True
+            Title.Caption = 'C'#243'digo'
+            Width = 51
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'NM_PESSOAS'
+            ReadOnly = True
+            Title.Caption = 'Descri'#231#227'o'
+            Width = 316
+            Visible = True
+          end>
       end
       inherited Panel2: TPanel
         Top = 344
@@ -200,8 +217,8 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
         Visible = False
       end
       object Panel4: TPanel
-        Left = 232
-        Top = 27
+        Left = 189
+        Top = 274
         Width = 262
         Height = 46
         BevelOuter = bvNone
@@ -239,6 +256,49 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
           TabOrder = 1
         end
       end
+    end
+  end
+  inherited FDMemTable1: TDWMemtable
+    object FDMemTable1CD_PESSOAS: TIntegerField
+      FieldName = 'CD_PESSOAS'
+    end
+    object FDMemTable1NM_PESSOAS: TStringField
+      FieldName = 'NM_PESSOAS'
+      Size = 60
+    end
+    object FDMemTable1DT_NASCIMENTO: TStringField
+      FieldName = 'DT_NASCIMENTO'
+    end
+    object FDMemTable1CD_SEXO: TIntegerField
+      FieldName = 'CD_SEXO'
+    end
+    object FDMemTable1CD_ENDERECOS: TIntegerField
+      FieldName = 'CD_ENDERECOS'
+    end
+    object FDMemTable1CPF: TStringField
+      FieldName = 'CPF'
+    end
+    object FDMemTable1CD_ESTADO_CIVIL: TIntegerField
+      FieldName = 'CD_ESTADO_CIVIL'
+    end
+    object FDMemTable1NM_FANTASIA: TStringField
+      FieldName = 'NM_FANTASIA'
+      Size = 60
+    end
+    object FDMemTable1CNPJ: TStringField
+      FieldName = 'CNPJ'
+    end
+    object FDMemTable1RAZAO_SOCIAL: TStringField
+      FieldName = 'RAZAO_SOCIAL'
+    end
+    object FDMemTable1TIPO_PESSOA: TIntegerField
+      FieldName = 'TIPO_PESSOA'
+    end
+    object FDMemTable1DT_REGISTRO: TStringField
+      FieldName = 'DT_REGISTRO'
+    end
+    object FDMemTable1CD_USUARIOS: TIntegerField
+      FieldName = 'CD_USUARIOS'
     end
   end
 end

@@ -4,11 +4,9 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB, FireDAC.Stan.Intf,
-  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
-  Vcl.ComCtrls, untDM;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
+  Vcl.ComCtrls, untDM, ClasseCadastro, uDWDataset;
 
 type
   TfrmCadastroEnderecos = class(TfrmPadrao)
@@ -20,10 +18,14 @@ type
     Label7: TLabel;
     Label8: TLabel;
     cbCidades: TComboBox;
+    FDMemTable1CD_ENDERECOS: TIntegerField;
+    FDMemTable1DS_ENDERECOS: TStringField;
     FDMemTable1BAIRRO: TStringField;
-    FDMemTable1NUMERO: TStringField;
     FDMemTable1COMPLEMENTO: TStringField;
+    FDMemTable1NUMERO: TStringField;
     FDMemTable1DS_CIDADES: TStringField;
+    FDMemTable1CD_CIDADES: TIntegerField;
+    FDMemTable1CD_USUARIO: TIntegerField;
     procedure FormCreate(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
@@ -108,6 +110,8 @@ end;
 procedure TfrmCadastroEnderecos.DBGrid1DblClick(Sender: TObject);
 begin
   inherited;
+  edtCodigo.Text       :=  FDMemTable1.FieldByName('CD_ENDERECOS').AsString;
+  edtDescricao.Text    :=  FDMemTable1.FieldByName('DS_ENDERECOS').AsString;
   edtBairro.Text       :=  FDMemTable1.FieldByName('BAIRRO').AsString;
   edtComplemento.Text  :=  FDMemTable1.FieldByName('COMPLEMENTO').AsString;
   edtNumero.Text       :=  FDMemTable1.FieldByName('NUMERO').AsString;
@@ -121,29 +125,20 @@ begin
 end;
 
 procedure TfrmCadastroEnderecos.GravarRegistro;
+var
+  CEnderecos: TEnderecos;
 begin
-  FDMTPadrao.Close;
-  FDMTPadrao.FieldDefs.Clear;//Limpamos campos
-  FDMTPadrao.FieldDefs.Add('CD_CIDADES', ftInteger); // adicionamos campos
-  FDMTPadrao.FieldDefs.Add('DS_ENDERECOS', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('BAIRRO', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('COMPLEMENTO', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('NUMERO', ftString, 60, False);
-  FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
-  FDMTPadrao.FieldDefs.Add('CD_USUARIO', ftInteger);
-  FDMTPadrao.CreateDataSet;
-
-  FDMTPadrao.Append;
-  FDMTPadrao.FieldByName('CD_CIDADES').AsInteger   := DM.ComboBoxRetornar(cbCidades);
-  FDMTPadrao.FieldByName('DS_ENDERECOS').AsString  := edtDescricao.Text;
-  FDMTPadrao.FieldByName('BAIRRO').AsString        := edtBairro.Text;
-  FDMTPadrao.FieldByName('COMPLEMENTO').AsString   := edtComplemento.Text;
-  FDMTPadrao.FieldByName('NUMERO').AsString        := edtNumero.Text;
-  FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime := Now;
-  FDMTPadrao.FieldByName('CD_USUARIO').AsInteger   := 1;
-  FDMTPadrao.Post;
+  CEnderecos:=Nil;
+  CEnderecos:=TEnderecos.Create;
 
   try
+    CEnderecos.FCD_CIDADES      := DM.ComboBoxRetornar(cbCidades);
+    CEnderecos.FDS_ENDERECOS    := edtDescricao.Text;
+    CEnderecos.FBAIRRO          := edtBairro.Text;
+    CEnderecos.FCOMPLEMENTO     := edtComplemento.Text;
+    CEnderecos.FNUMERO          := edtNumero.Text;
+    // CEnderecos.FDT_CADASTRO  := Now;
+    CEnderecos.FCD_USUARIOS     := 1;
 
     try
       if btnSalvar.Caption = 'Salvar' then
@@ -153,7 +148,7 @@ begin
         else
         begin
           //Inserir os dados no banco
-          GravarServidor('ENDERECOS');
+          GravarServidorJson(CEnderecos, 'ENDERECOS');
 
           LimparCampos;
           PageControl1.ActivePage := tabPrincipal;
@@ -163,20 +158,20 @@ begin
       if btnSalvar.Caption = 'Atualizar' then
       begin
         //Verificar se o item existe no banco e se houve alteração a atualizado no banco
-        AtualizarServidor('ENDERECOS', edtCodigo.Text);
+        AtualizarServidor(CEnderecos, 'ENDERECOS', edtCodigo.Text);
         LimparCampos;
         PageControl1.ActivePage := tabPrincipal;
       end;
-    finally
 
+      Listar(aSQLPadrao);
+
+    except on E: Exception do
+      begin
+        ShowMessage(E.Message);
+      end;
     end;
-
-    Listar(aSQLPadrao);
-
-  except on E: Exception do
-    begin
-      ShowMessage(E.Message);
-    end;
+  finally
+    CEnderecos.DisposeOf;
   end;
 end;
 

@@ -76,10 +76,10 @@ type
   TServerModule = class(TServerMethodDataModule)
     DWServerEvents1: TDWServerEvents;
     RESTDWPoolerDB1: TRESTDWPoolerDB;
-    FDMemTable1: TFDMemTable;
     FDConnection1: TFDConnection;
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
     FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    RESTDWClientSQL1: TRESTDWClientSQL;
     procedure DWServerEvents1EventsGravarReplyEvent(var Params: TDWParams;
       var Result: string);
     procedure ServerMethodDataModuleWelcomeMessage(Welcomemsg,
@@ -119,17 +119,12 @@ implementation
 procedure TServerModule.DWServerEvents1EventsAtualizarReplyEvent(
   var Params: TDWParams; var Result: string);
 var
-  JSONValue: TJSONValue;
   aSQL, bSQL: String;
   I, X, Y: Integer;
 
   aFDQuery: TFDQuery;
 begin
   try
-    JSONValue           := Nil;
-    aFDQuery            := Nil;
-
-    JSONValue           := TJSONValue.Create;
     aFDQuery            := TFDQuery.Create(Nil);
     aFDQuery.Connection := FDConnection1;
 
@@ -137,16 +132,9 @@ begin
     bSQL:='';
 
     try
-      JSONValue           := TJSONValue.Create;
+      RESTDWClientSQL1.OpenJson(Params.ItemsString['Result'].AsString);
 
-      JSONValue.Encoded   := False;
-      JSONValue.JsonMode  := jmDataware;
-
-      FDMemTable1.Close;
-      JSONValue.WriteToDataset(dtFull, Params.ItemsString['Result'].Value, FDMemTable1);
-      FDMemTable1.CommitUpdates;
-
-      if FDMemTable1.RecordCount > 0 then
+      if RESTDWClientSQL1.RecordCount > 0 then
       begin
         aFDQuery.Close;
         aFDQuery.SQL.Clear;
@@ -157,10 +145,10 @@ begin
         if aFDQuery.RecordCount > 0 then
         begin
           //Gerar sql
-          for I := 0 to FDMemTable1.FieldCount - 1 do
+          for I := 0 to RESTDWClientSQL1.FieldCount - 1 do
           begin
-            aSQL:=aSQL + FDMemTable1.FieldDefs.Items[I].Name + ' = :' +
-            FDMemTable1.FieldDefs.Items[I].Name + ', ';
+            aSQL:=aSQL + RESTDWClientSQL1.FieldDefs.Items[I].Name + ' = :' +
+            RESTDWClientSQL1.FieldDefs.Items[I].Name + ', ';
           end;
             bSQL:=    ('UPDATE ' + Params.ItemsString['Tabela'].AsString + ' SET ' +
                       Copy(aSQL, 1, length(aSQL) - 2) +
@@ -168,31 +156,30 @@ begin
                       ' = :CD_' + Params.ItemsString['Tabela'].AsString);
 
           //Atualizar no banco
-          FDMemTable1.First;
-          FDMemTable1.DisableControls;
+          RESTDWClientSQL1.First;
+          RESTDWClientSQL1.DisableControls;
 
           aFDQuery.Close;
           aFDQuery.SQL.Clear;
           aFDQuery.SQL.Add(bSQL);
 
-          for X:= 0 to FDMemTable1.RecordCount - 1 do
+          for X:= 0 to RESTDWClientSQL1.RecordCount - 1 do
           begin
-            for Y := 0 to FDMemTable1.FieldCount - 1 do
+            for Y := 0 to RESTDWClientSQL1.FieldCount - 1 do
             begin
-              aFDQuery.Params[Y].Values[X]:=FDMemTable1.Fields.Fields[Y].Value
+              aFDQuery.Params[Y].Values[X]:=RESTDWClientSQL1.Fields.Fields[Y].Value
             end;
               aFDQuery.ParamByName('CD_' + Params.ItemsString['Tabela'].AsString).AsString:=
                       Params.ItemsString['ID'].AsString;
-            FDMemTable1.Next;
+            RESTDWClientSQL1.Next;
           end;
-          FDMemTable1.EnableControls;
+          RESTDWClientSQL1.EnableControls;
           aFDQuery.ExecSQL;
         end;
       end;
 
     finally
       begin
-        JSONValue.DisposeOf;
         aFDQuery.DisposeOf;
       end;
     end;
@@ -299,7 +286,6 @@ end;
 procedure TServerModule.DWServerEvents1EventsGravarReplyEvent(
   var Params: TDWParams; var Result: string);
 var
-  JSONValue: TJSONValue;
   aSQL, bSQL, cSQL: String;
   I, X, Y: Integer;
 
@@ -310,10 +296,7 @@ begin
   RESTDWClientSQL:=TRESTDWClientSQL.Create(Nil);
 
   try
-    JSONValue           := Nil;
     aFDQuery            := Nil;
-
-    JSONValue           := TJSONValue.Create;
     aFDQuery            := TFDQuery.Create(Nil);
     aFDQuery.Connection := FDConnection1;
 
@@ -322,15 +305,7 @@ begin
     cSQL:='';
 
     try
-      JSONValue           := TJSONValue.Create;
-
-      JSONValue.Encoded   := False;
-      JSONValue.JsonMode  := jmDataware;
-
-      //FDMemTable1.Close;
-      //JSONValue.WriteToDataset(dtFull, Params.ItemsString['Result'].Value, FDMemTable1);
       RESTDWClientSQL.OpenJson(Params.ItemsString['Result'].AsString);
-      //FDMemTable1.CommitUpdates;
 
       if RESTDWClientSQL.RecordCount > 0 then
       begin
@@ -376,7 +351,6 @@ begin
 
     finally
       begin
-        JSONValue.DisposeOf;
         aFDQuery.DisposeOf;
         RESTDWClientSQL.DisposeOf;
       end;
@@ -406,20 +380,20 @@ begin
       JSONValue.Encoded   := False;
       JSONValue.JsonMode  := jmDataware;
 
-      FDMemTable1.Close;
-      JSONValue.WriteToDataset(dtFull, Params.ItemsString['Result'].Value, FDMemTable1);
-      FDMemTable1.CommitUpdates;
+      RESTDWClientSQL1.Close;
+      JSONValue.WriteToDataset(dtFull, Params.ItemsString['Result'].Value, RESTDWClientSQL1);
+      RESTDWClientSQL1.CommitUpdates;
 
-      if FDMemTable1.RecordCount > 0 then
+      if RESTDWClientSQL1.RecordCount > 0 then
       begin
         aFDQuery.Close;
         aFDQuery.SQL.Clear;
         aFDQuery.SQL.Add('SELECT USUARIO FROM USUARIOS '+
                          'WHERE USUARIO = :USUARIO');
-        aFDQuery.ParamByName('USUARIO').AsString:=FDMemTable1.FieldByName('USUARIO').AsString;
+        aFDQuery.ParamByName('USUARIO').AsString:=RESTDWClientSQL1.FieldByName('USUARIO').AsString;
         aFDQuery.Open;
 
-        if aFDQuery.FieldByName('USUARIO').AsString <> FDMemTable1.FieldByName('USUARIO').AsString then
+        if aFDQuery.FieldByName('USUARIO').AsString <> RESTDWClientSQL1.FieldByName('USUARIO').AsString then
         begin
           //Gravar no banco com ArrayDML
           aFDQuery.Close;
@@ -439,11 +413,11 @@ begin
                           ':TOKEN, '+
                           ':DT_REGISTRO, '+
                           ':IN_ATIVO)');
-          aFDQuery.ParamByName('NM_USUARIOS').AsString      :=  FDMemTable1.FieldByName('NM_USUARIOS').AsString;
-          aFDQuery.ParamByName('USUARIO').AsString          :=  FDMemTable1.FieldByName('USUARIO').AsString;
-          aFDQuery.ParamByName('SENHA').AsString            :=  FDMemTable1.FieldByName('SENHA').AsString;
+          aFDQuery.ParamByName('NM_USUARIOS').AsString      :=  RESTDWClientSQL1.FieldByName('NM_USUARIOS').AsString;
+          aFDQuery.ParamByName('USUARIO').AsString          :=  RESTDWClientSQL1.FieldByName('USUARIO').AsString;
+          aFDQuery.ParamByName('SENHA').AsString            :=  RESTDWClientSQL1.FieldByName('SENHA').AsString;
           aFDQuery.ParamByName('TOKEN').AsString            :=  TToken.TokenCriar(
-                                                                  FDMemTable1.FieldByName('USUARIO').AsString);
+                                                                  RESTDWClientSQL1.FieldByName('USUARIO').AsString);
           aFDQuery.ParamByName('DT_REGISTRO').AsDateTime    :=  Now;
           aFDQuery.ParamByName('IN_ATIVO').AsString         :=  'S';
           aFDQuery.ExecSQL;

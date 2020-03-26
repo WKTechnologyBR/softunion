@@ -15,14 +15,10 @@ uses
 
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.UI.Intf, FireDAC.VCLUI.Wait,
-  FireDAC.Phys.FBDef, FireDAC.Stan.Intf, FireDAC.Stan.Option,
-  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Vcl.StdCtrls, Data.DB,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Phys, FireDAC.Phys.IBBase,
-  FireDAC.Phys.FB, FireDAC.Comp.UI, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Buttons,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Buttons,
   Vcl.ComCtrls, Vcl.ToolWin, frxDBSet, frxExportPDF, frxClass, Vcl.Grids,
-  Vcl.DBGrids, ClasseCadastro;
+  Vcl.DBGrids, ClasseCadastro, uDWConstsData, uDWDataset,
+  Data.DB, Vcl.StdCtrls;
 
 type
   TfrmPadrao = class(TForm)
@@ -35,9 +31,6 @@ type
     tabEdicao: TTabSheet;
     Panel1: TPanel;
     DBGrid1: TDBGrid;
-    FDMemTable1: TFDMemTable;
-    FDMemTable1CD_CADASTRO: TIntegerField;
-    FDMemTable1DS_CADASTRO: TStringField;
     DataSource1: TDataSource;
     Panel2: TPanel;
     btnNovoRegistro: TButton;
@@ -50,7 +43,7 @@ type
     Label4: TLabel;
     Shape2: TShape;
     lblQuantidadeArtigos: TLabel;
-    FDMTPadrao: TFDMemTable;
+    FDMemTable1: TDWMemtable;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
@@ -64,12 +57,9 @@ type
     procedure PreencherComboBox;
     procedure OcultarSheets(PageControl: TPageControl);
     procedure Listar(SQL_TEXTO: String);
-    procedure GravarServidor(aTabela: String; aTipoGravar: String = 'Gravar');
-    procedure GravarServidorJson(aObject: TObject; aTabela: String; aTipoGravar: String = 'Gravar');
-    procedure AtualizarServidor(aTabela: String; aID: String);
+    procedure GravarServidorJson(aObject: TObject; aTabela: String; aParam: String = 'Gravar');
+    procedure AtualizarServidor(aObject: TObject; aTabela: String; aID: String);
     procedure DeletarServidor(aTabela: String; aID: String);
-//    function GeraCodigo(SQL_TEXTO: String): String;
-//    procedure Gravar(SQL_TEXTO: String);
   end;
 
 var
@@ -79,7 +69,7 @@ implementation
 
 {$R *.dfm}
 
-uses untDM;
+uses untDM, FireDAC.Comp.Client;
 
 procedure TfrmPadrao.btnNovoRegistroClick(Sender: TObject);
 begin
@@ -94,37 +84,30 @@ begin
   PageControl1.ActivePage:=tabPrincipal;
 end;
 
-procedure TfrmPadrao.AtualizarServidor(aTabela: String; aID: String);
+procedure TfrmPadrao.AtualizarServidor(aObject: TObject; aTabela: String; aID: String);
 var
-  JSONValue     : TJSONValue;
   dwParams      : TDWParams;
   vErrorMessage : String;
 begin
-  JSONValue     := Nil;
   dwParams      := Nil;
   vErrorMessage := '';
 
   try
-    JSONValue          := TJSONValue.Create;
-    JSONValue.Encoded  := False;
-    JSONValue.JsonMode := jmDataware;
-    JSONValue.LoadFromDataset('', FDMTPadrao, False,  JSONValue.JsonMode);
-
     DM.DWClientEvents1.CreateDWParams('Atualizar', dwParams);
-    dwParams.ItemsString['Result'].AsString := JSONValue.ToJSON;
+    dwParams.ItemsString['Result'].AsString := TJson.ObjectToJsonString(aObject);
     dwParams.ItemsString['Tabela'].AsString := aTabela;
     dwParams.ItemsString['ID'].AsString     := aID;
+    dwParams.ItemsString['Token'].AsString  := DM.TOKEN;
     DM.DWClientEvents1.SendEvent('Atualizar', dwParams, vErrorMessage);
 
     if vErrorMessage = '' then
     begin
-      //Não ocorreu erro no servidor, limpar campos
+
     end;
 
   finally
     begin
       dwParams.DisposeOf;
-      JSONValue.DisposeOf;
     end;
   end;
 end;
@@ -138,8 +121,8 @@ procedure TfrmPadrao.DBGrid1DblClick(Sender: TObject);
 begin
   if FDMemTable1.RecordCount > 0 then
   begin
-    edtCodigo.Text    :=  FDMemTable1.FieldByName('CD_CADASTRO').AsString;
-    edtDescricao.Text :=  FDMemTable1.FieldByName('DS_CADASTRO').AsString;
+//    edtCodigo.Text    :=  FDMemTable1.FieldByName('CD_CADASTRO').AsString;
+//    edtDescricao.Text :=  FDMemTable1.FieldByName('DS_CADASTRO').AsString;
     btnSalvar.Caption :=  'Atualizar';
     PageControl1.ActivePage:=tabEdicao;
   end else ShowMessage('Selecione um item para editar.');
@@ -171,45 +154,7 @@ begin
   end;
 end;
 
-procedure TfrmPadrao.GravarServidor(aTabela: String; aTipoGravar: String = 'Gravar');
-var
-  JSONValue     : TJSONValue;
-  dwParams      : TDWParams;
-  vErrorMessage : String;
-begin
-  JSONValue     := Nil;
-  dwParams      := Nil;
-  vErrorMessage := '';
-
-  try
-    JSONValue          := TJSONValue.Create;
-    JSONValue.Encoded  := False;
-    JSONValue.JsonMode := jmDataware;
-    JSONValue.LoadFromDataset('', FDMTPadrao, False,  JSONValue.JsonMode);
-
-    DM.DWClientEvents1.CreateDWParams(aTipoGravar, dwParams);
-    dwParams.ItemsString['Result'].AsString := JSONValue.ToJSON;
-    dwParams.ItemsString['Tabela'].AsString := aTabela;
-
-    if aTipoGravar = 'Gravar' then
-      dwParams.ItemsString['Token'].AsString  := DM.TOKEN;
-
-    DM.DWClientEvents1.SendEvent(aTipoGravar, dwParams, vErrorMessage);
-
-    if vErrorMessage = '' then
-    begin
-      //Não ocorreu erro no servidor, limpar campos
-    end;
-
-  finally
-    begin
-      dwParams.DisposeOf;
-      JSONValue.DisposeOf;
-    end;
-  end;
-end;
-
-procedure TfrmPadrao.GravarServidorJson(aObject: TObject; aTabela: String; aTipoGravar: String = 'Gravar');
+procedure TfrmPadrao.GravarServidorJson(aObject: TObject; aTabela: String; aParam: String = 'Gravar');
 var
   dwParams      : TDWParams;
   vErrorMessage : String;
@@ -218,14 +163,14 @@ begin
   vErrorMessage := '';
 
   try
-    DM.DWClientEvents1.CreateDWParams(aTipoGravar, dwParams);
+    DM.DWClientEvents1.CreateDWParams(aParam, dwParams);
     dwParams.ItemsString['Result'].AsString := TJson.ObjectToJsonString(aObject);
     dwParams.ItemsString['Tabela'].AsString := aTabela;
 
-    if aTipoGravar = 'Gravar' then
+    if aParam = 'Gravar' then
       dwParams.ItemsString['Token'].AsString  := DM.TOKEN;
 
-    DM.DWClientEvents1.SendEvent(aTipoGravar, dwParams, vErrorMessage);
+    DM.DWClientEvents1.SendEvent(aParam, dwParams, vErrorMessage);
 
     if vErrorMessage = '' then
     begin
@@ -251,36 +196,31 @@ end;
 
 procedure TfrmPadrao.Listar(SQL_TEXTO: String);
 var
-  JSONValue     : TJSONValue;
   dwParams      : TDWParams;
   vErrorMessage : String;
-  aFDQuery: TFDQuery;
   I: Integer;
   RDWClientSQL: TRESTDWClientSQL;
 begin
   try
     RDWClientSQL  :=  Nil;
-    JSONValue     :=  Nil;
     dwParams      :=  Nil;
     vErrorMessage :=  '';
-    aFDQuery      :=  Nil;
 
     if Trim(SQL_TEXTO) <> '' then
     begin
       FDMemTable1.Close;
-      FDMemTable1.CreateDataSet;
+      FDMemTable1.Open;
 
       if DM.TestarConexaoServidorRDW then
       begin
         RDWClientSQL  := TRESTDWClientSQL.Create(Nil);
-        JSONValue     := TJSONValue.Create;
+
         try
           DM.DWClientEvents1.CreateDWParams('Retornar', dwParams);
           dwParams.ItemsString['SQL'].AsString  := SQL_TEXTO;
           dwParams.ItemsString['Token'].AsString  := DM.TOKEN;
           DM.DWClientEvents1.SendEvent('Retornar', dwParams, vErrorMessage);
 
-          //JSONValue.WriteToDataset(dtFull, dwParams.ItemsString['Result'].Value, DM.FDMemTable2);
           RDWClientSQL.OpenJson(vErrorMessage);
 
           RDWClientSQL.First;
@@ -301,7 +241,6 @@ begin
             RDWClientSQL.EnableControls;
             FDMemTable1.EnableControls;
             FDMemTable1.First;
-
           end;
 
           if vErrorMessage = '' then
@@ -312,13 +251,16 @@ begin
         finally
           begin
             dwParams.DisposeOf;
-            JSONValue.DisposeOf;
             RDWClientSQL.DisposeOf;
           end;
         end;
+
       end else ShowMessage('Sem conexão com o servidor.');
+
     end;
+
   except on E: Exception do
+    ShowMessage(E.Message);
   end;
 end;
 

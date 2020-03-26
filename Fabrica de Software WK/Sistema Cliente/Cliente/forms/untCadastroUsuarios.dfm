@@ -4,11 +4,15 @@ inherited frmCadastroUsuarios: TfrmCadastroUsuarios
   TextHeight = 13
   inherited PageControl1: TPageControl
     inherited tabPrincipal: TTabSheet
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       inherited DBGrid1: TDBGrid
         Columns = <
           item
             Expanded = False
-            FieldName = 'CD_CADASTRO'
+            FieldName = 'CD_USUARIOS'
             ReadOnly = True
             Title.Caption = 'C'#243'digo'
             Width = 51
@@ -16,22 +20,26 @@ inherited frmCadastroUsuarios: TfrmCadastroUsuarios
           end
           item
             Expanded = False
-            FieldName = 'DS_CADASTRO'
+            FieldName = 'NM_USUARIOS'
             ReadOnly = True
-            Title.Caption = 'Usu'#225'rio'
+            Title.Caption = 'Nome do Usu'#225'rio'
             Width = 140
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'USUARIO'
-            Title.Caption = 'E-mail'
+            Title.Caption = 'Usu'#225'rio/Login'
             Width = 222
             Visible = True
           end>
       end
     end
     inherited tabEdicao: TTabSheet
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       inherited Shape2: TShape
         ExplicitLeft = 5
         ExplicitTop = 7
@@ -67,7 +75,7 @@ inherited frmCadastroUsuarios: TfrmCadastroUsuarios
           OnClick = btnDeletarClick
         end
       end
-      object edtEmail: TEdit
+      object edtUsuario: TEdit
         Left = 40
         Top = 199
         Width = 193
@@ -86,8 +94,15 @@ inherited frmCadastroUsuarios: TfrmCadastroUsuarios
       end
     end
   end
-  inherited FDMemTable1: TFDMemTable
-    object FDMemTable1EMAIL: TStringField
+  inherited FDMemTable1: TDWMemtable
+    object FDMemTable1CD_USUARIOS: TIntegerField
+      FieldName = 'CD_USUARIOS'
+    end
+    object FDMemTable1NM_USUARIOS: TStringField
+      FieldName = 'NM_USUARIOS'
+      Size = 60
+    end
+    object FDMemTable1USUARIO: TStringField
       FieldName = 'USUARIO'
       Size = 60
     end

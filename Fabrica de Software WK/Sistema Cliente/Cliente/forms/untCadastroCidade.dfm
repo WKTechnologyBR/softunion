@@ -4,15 +4,11 @@ inherited frmCadastroCidade: TfrmCadastroCidade
   TextHeight = 13
   inherited PageControl1: TPageControl
     inherited tabPrincipal: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       inherited DBGrid1: TDBGrid
         Columns = <
           item
             Expanded = False
-            FieldName = 'CD_CADASTRO'
+            FieldName = 'CD_CIDADES'
             ReadOnly = True
             Title.Caption = 'C'#243'digo'
             Width = 46
@@ -20,16 +16,17 @@ inherited frmCadastroCidade: TfrmCadastroCidade
           end
           item
             Expanded = False
-            FieldName = 'DS_CADASTRO'
+            FieldName = 'DS_CIDADES'
             ReadOnly = True
             Title.Caption = 'Cidade'
-            Width = 253
+            Width = 183
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'DS_ESTADOS'
             Title.Caption = 'Estado'
+            Width = 193
             Visible = True
           end>
       end
@@ -72,8 +69,15 @@ inherited frmCadastroCidade: TfrmCadastroCidade
       end
     end
   end
-  inherited FDMemTable1: TFDMemTable
-    object FDMemTable1ESTADO: TStringField
+  inherited FDMemTable1: TDWMemtable
+    object FDMemTable1CD_CIDADES: TIntegerField
+      FieldName = 'CD_CIDADES'
+    end
+    object FDMemTable1DS_CIDADES: TStringField
+      FieldName = 'DS_CIDADES'
+      Size = 60
+    end
+    object FDMemTable1DS_ESTADOS: TStringField
       FieldName = 'DS_ESTADOS'
       Size = 60
     end

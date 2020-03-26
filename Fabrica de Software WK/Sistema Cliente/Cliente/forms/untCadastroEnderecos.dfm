@@ -4,11 +4,15 @@ inherited frmCadastroEnderecos: TfrmCadastroEnderecos
   TextHeight = 13
   inherited PageControl1: TPageControl
     inherited tabPrincipal: TTabSheet
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       inherited DBGrid1: TDBGrid
         Columns = <
           item
             Expanded = False
-            FieldName = 'CD_CADASTRO'
+            FieldName = 'CD_ENDERECOS'
             ReadOnly = True
             Title.Caption = 'C'#243'digo'
             Width = 51
@@ -16,7 +20,7 @@ inherited frmCadastroEnderecos: TfrmCadastroEnderecos
           end
           item
             Expanded = False
-            FieldName = 'DS_CADASTRO'
+            FieldName = 'DS_ENDERECOS'
             ReadOnly = True
             Title.Caption = 'Descri'#231#227'o'
             Width = 117
@@ -51,6 +55,10 @@ inherited frmCadastroEnderecos: TfrmCadastroEnderecos
       end
     end
     inherited tabEdicao: TTabSheet
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       inherited Shape2: TShape
         ExplicitLeft = 5
         ExplicitTop = 21
@@ -144,7 +152,14 @@ inherited frmCadastroEnderecos: TfrmCadastroEnderecos
       end
     end
   end
-  inherited FDMemTable1: TFDMemTable
+  inherited FDMemTable1: TDWMemtable
+    object FDMemTable1CD_ENDERECOS: TIntegerField
+      FieldName = 'CD_ENDERECOS'
+    end
+    object FDMemTable1DS_ENDERECOS: TStringField
+      FieldName = 'DS_ENDERECOS'
+      Size = 60
+    end
     object FDMemTable1BAIRRO: TStringField
       FieldName = 'BAIRRO'
       Size = 60
@@ -155,11 +170,17 @@ inherited frmCadastroEnderecos: TfrmCadastroEnderecos
     end
     object FDMemTable1NUMERO: TStringField
       FieldName = 'NUMERO'
-      Size = 60
+      Size = 15
     end
     object FDMemTable1DS_CIDADES: TStringField
       FieldName = 'DS_CIDADES'
       Size = 60
+    end
+    object FDMemTable1CD_CIDADES: TIntegerField
+      FieldName = 'CD_CIDADES'
+    end
+    object FDMemTable1CD_USUARIO: TIntegerField
+      FieldName = 'CD_USUARIO'
     end
   end
 end

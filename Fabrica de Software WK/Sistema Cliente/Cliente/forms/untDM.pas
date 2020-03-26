@@ -30,12 +30,12 @@ type
   TDM = class(TDataModule)
     DWClientEvents1: TDWClientEvents;
     RESTClientPooler1: TRESTClientPooler;
-    FDMemTable2: TFDMemTable;
   private
     { Private declarations }
   public
     { Public declarations }
     TOKEN: String;
+    CD_USUARIO: Integer;
 
     function ComboBoxRetornar(aCB: TComboBox): integer;
     procedure ListarDadosComboBox(CDS: TComboBox; SQL_TEXTO: String);

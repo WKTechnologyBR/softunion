@@ -5,16 +5,16 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB, FireDAC.Stan.Intf,
-  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
-  Vcl.ComCtrls, untDM, ClasseCadastro;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untPadrao, Data.DB,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
+  Vcl.ComCtrls, untDM, ClasseCadastro, Datasnap.DBClient, uDWDataset;
 
 type
   TfrmCadastroEstados = class(TfrmPadrao)
     Label5: TLabel;
     edtSigla: TEdit;
+    FDMemTable1CD_ESTADOS: TIntegerField;
+    FDMemTable1DS_ESTADOS: TStringField;
     FDMemTable1SIGLA: TStringField;
     procedure btnDeletarClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -30,9 +30,11 @@ var
   frmCadastroEstados: TfrmCadastroEstados;
 
 const
-  aSQLPadrao: String = 'SELECT CD_ESTADOS CD_CADASTRO, ' +
-    'DS_ESTADOS DS_CADASTRO, ' + 'SIGLA ' + 'FROM ESTADOS ' +
-    'ORDER BY DS_ESTADOS';
+  aSQLPadrao: String ='SELECT CD_ESTADOS, ' +
+                      'DS_ESTADOS, ' +
+                      'SIGLA ' +
+                      'FROM ESTADOS ' +
+                      'ORDER BY DS_ESTADOS';
 
 implementation
 
@@ -101,7 +103,7 @@ begin
 
       if btnSalvar.Caption = 'Atualizar' then
       begin
-        AtualizarServidor('ESTADOS', edtCodigo.Text);
+        AtualizarServidor(CEstado, 'ESTADOS', edtCodigo.Text);
       end;
 
       Listar(aSQLPadrao);
@@ -121,6 +123,8 @@ end;
 procedure TfrmCadastroEstados.DBGrid1DblClick(Sender: TObject);
 begin
   inherited;
+  edtCodigo.Text := FDMemTable1.FieldByName('CD_ESTADOS').AsString;
+  edtDescricao.Text := FDMemTable1.FieldByName('DS_ESTADOS').AsString;
   edtSigla.Text := FDMemTable1.FieldByName('SIGLA').AsString;
 end;
 

@@ -23,7 +23,7 @@ object frmPadrao: TfrmPadrao
     Top = 0
     Width = 500
     Height = 320
-    ActivePage = tabEdicao
+    ActivePage = tabPrincipal
     Align = alClient
     TabOrder = 0
     object tabPrincipal: TTabSheet
@@ -238,38 +238,14 @@ object frmPadrao: TfrmPadrao
       end
     end
   end
-  object FDMemTable1: TFDMemTable
-    FetchOptions.AssignedValues = [evMode]
-    FetchOptions.Mode = fmAll
-    ResourceOptions.AssignedValues = [rvSilentMode]
-    ResourceOptions.SilentMode = True
-    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
-    UpdateOptions.CheckRequired = False
-    UpdateOptions.AutoCommitUpdates = True
-    Left = 48
-    Top = 176
-    object FDMemTable1CD_CADASTRO: TIntegerField
-      FieldName = 'CD_CADASTRO'
-    end
-    object FDMemTable1DS_CADASTRO: TStringField
-      FieldName = 'DS_CADASTRO'
-      Size = 60
-    end
-  end
   object DataSource1: TDataSource
     DataSet = FDMemTable1
     Left = 48
     Top = 240
   end
-  object FDMTPadrao: TFDMemTable
-    FetchOptions.AssignedValues = [evMode]
-    FetchOptions.Mode = fmAll
-    ResourceOptions.AssignedValues = [rvSilentMode]
-    ResourceOptions.SilentMode = True
-    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
-    UpdateOptions.CheckRequired = False
-    UpdateOptions.AutoCommitUpdates = True
-    Left = 240
-    Top = 160
+  object FDMemTable1: TDWMemtable
+    FieldDefs = <>
+    Left = 52
+    Top = 176
   end
 end

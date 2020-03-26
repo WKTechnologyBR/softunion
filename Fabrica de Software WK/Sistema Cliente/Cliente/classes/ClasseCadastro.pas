@@ -46,6 +46,26 @@ type
   end;
 
 type
+  TEnderecos = class
+  private
+    CD_CIDADES: Integer;
+    DS_ENDERECOS: String;
+    BAIRRO: String;
+    COMPLEMENTO: String;
+    NUMERO: String;
+    // DT_REGISTRO: TDateTime;
+    CD_USUARIO: Integer;
+  public
+    property FCD_CIDADES: Integer read CD_CIDADES write CD_CIDADES;
+    property FDS_ENDERECOS: String read DS_ENDERECOS write DS_ENDERECOS;
+    property FBAIRRO: String read BAIRRO write BAIRRO;
+    property FCOMPLEMENTO: String read COMPLEMENTO write COMPLEMENTO;
+    property FNUMERO: String read NUMERO write NUMERO;
+    // property FDT_REGISTRO: TDateTime read DT_REGISTRO write DT_REGISTRO;
+    property FCD_USUARIOS: Integer read CD_USUARIO write CD_USUARIO;
+  end;
+
+type
   TEstados = class
   private
     // CD_ESTADOS: String;
@@ -57,6 +77,81 @@ type
     property FDS_ESTADOS: String read DS_ESTADOS write DS_ESTADOS;
     property FSIGLA: String read SIGLA write SIGLA;
     // property FDT_REGISTRO: TDateTime read DT_REGISTRO write DT_REGISTRO;
+  end;
+
+type
+  TEstado_Civil = class
+  private
+    DS_ESTADO_CIVIL: String;
+    // DT_REGISTRO: TDateTime;
+    CD_USUARIOS: Integer;
+  public
+    property FDS_ESTADO_CIVIL: String read DS_ESTADO_CIVIL
+      write DS_ESTADO_CIVIL;
+    // property FDT_REGISTRO: TDateTime read DT_REGISTRO write DT_REGISTRO;
+    property FCD_USUARIOS: Integer read CD_USUARIOS write CD_USUARIOS;
+  end;
+
+type
+  TPessoas = class
+  private
+    NM_PESSOAS: String;
+    // DT_NASCIMENTO: TDateTime;
+    CD_SEXO: Integer;
+    CD_ENDERECOS: Integer;
+    CPF: String;
+    CD_ESTADO_CIVIL: Integer;
+    NM_FANTASIA: String;
+    CNPJ: String;
+    RAZAO_SOCIAL: String;
+    TIPO_PESSOA: Integer;
+    // DT_REGISTRO: TDateTime;
+    CD_USUARIOS: Integer;
+  public
+    property FNM_PESSOAS: String read NM_PESSOAS write NM_PESSOAS;
+    // property FDT_NASCIMENTO: TDateTime read DT_NASCIMENTO write DT_NASCIMENTO;
+    property FCD_SEXO: Integer read CD_SEXO write CD_SEXO;
+    property FCD_ENDERECOS: Integer read CD_ENDERECOS write CD_ENDERECOS;
+    property FCPF: String read CPF write CPF;
+    property FCD_ESTADO_CIVIL: Integer read CD_ESTADO_CIVIL write CD_ESTADO_CIVIL;
+    property FNM_FANTASIA: String read NM_FANTASIA write NM_FANTASIA;
+    property FCNPJ: String read CNPJ write CNPJ;
+    property FRAZAO_SOCIAL: String read RAZAO_SOCIAL write RAZAO_SOCIAL;
+    property FTIPO_PESSOA: Integer read TIPO_PESSOA write TIPO_PESSOA;
+    // property FDT_REGISTRO: TDateTime read DT_REGISTRO write DT_REGISTRO;
+    property FCD_USUARIOS: Integer read CD_USUARIOS write CD_USUARIOS;
+  end;
+
+type
+  TSexo = class
+  private
+    DS_SEXO: String;
+    // DT_REGISTRO: TDateTime;
+    CD_USUARIOS: Integer;
+  public
+    property FDS_SEXO: String read DS_SEXO write DS_SEXO;
+    // property FDT_REGISTRO: TDateTime read DT_REGISTRO write DT_REGISTRO;
+    property FCD_USUARIOS: Integer read CD_USUARIOS write CD_USUARIOS;
+  end;
+
+type
+  TUsuarios = class
+  private
+    CD_USUARIOS: Integer;
+    NM_USUARIOS: String;
+    USUARIO: String;
+    SENHA: String;
+    TOKEN: String;
+    // DT_REGISTRO: TDateTime;
+    IN_ATIVO: String;
+  public
+    property FCD_USUARIOS: Integer read CD_USUARIOS write CD_USUARIOS;
+    property FNM_USUARIOS: String read NM_USUARIOS write NM_USUARIOS;
+    property FUSUARIO: String read USUARIO write USUARIO;
+    property FSENHA: String read SENHA write SENHA;
+    property FTOKEN: String read TOKEN write TOKEN;
+    // property FDT_REGISTRO: TDateTime read DT_REGISTRO write DT_REGISTRO;
+    property FIN_ATIVO: String read IN_ATIVO write IN_ATIVO;
   end;
 
 implementation
