@@ -29,7 +29,6 @@ type
     Cidades1: TMenuItem;
     Estados1: TMenuItem;
     Sair1: TMenuItem;
-    Endereos1: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
@@ -38,7 +37,6 @@ type
     procedure Estados1Click(Sender: TObject);
     procedure Cidades1Click(Sender: TObject);
     procedure Clientes1Click(Sender: TObject);
-    procedure Endereos1Click(Sender: TObject);
     procedure Usurios1Click(Sender: TObject);
     procedure Sair1Click(Sender: TObject);
     procedure Pessoas1Click(Sender: TObject);
@@ -96,11 +94,6 @@ end;
 procedure TfrmPrincipal.Clientes1Click(Sender: TObject);
 begin
   AbrirForm(TfrmCadastroClientes);
-end;
-
-procedure TfrmPrincipal.Endereos1Click(Sender: TObject);
-begin
-  AbrirForm(TfrmCadastroEnderecos);
 end;
 
 procedure TfrmPrincipal.Estados1Click(Sender: TObject);

@@ -71,21 +71,8 @@ begin
   try
     CEstado.FDS_ESTADOS := edtDescricao.Text;
     CEstado.FSIGLA := edtSigla.Text;
-    //CEstado.FDT_REGISTRO := Now;
-
-    // FDMTPadrao.Close;
-    // FDMTPadrao.FieldDefs.Clear; // Limpamos campos
-    // FDMTPadrao.FieldDefs.Add('DS_ESTADOS', ftString, 40, False);
-    // // adicionamos campos
-    // FDMTPadrao.FieldDefs.Add('SIGLA', ftString, 40, False);
-    // FDMTPadrao.FieldDefs.Add('DT_REGISTRO', ftDateTime);
-    // FDMTPadrao.CreateDataSet;
-    //
-    // FDMTPadrao.Append;
-    // FDMTPadrao.FieldByName('DS_ESTADOS').AsString := edtDescricao.Text;
-    // FDMTPadrao.FieldByName('SIGLA').AsString := edtSigla.Text;
-    // FDMTPadrao.FieldByName('DT_REGISTRO').AsDateTime := Now;
-    // FDMTPadrao.Post;
+    CEstado.FDT_REGISTRO :=  Copy(FormatDateTime('YYYY.MM.DD hh:mm', NOW), 1, 15);
+    CEstado.FCD_USUARIOS := DM.CD_USUARIO;
 
     try
 

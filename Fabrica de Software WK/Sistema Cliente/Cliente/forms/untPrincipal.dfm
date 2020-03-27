@@ -52,10 +52,6 @@ object frmPrincipal: TfrmPrincipal
         Caption = 'Cidades'
         OnClick = Cidades1Click
       end
-      object Endereos1: TMenuItem
-        Caption = 'Endere'#231'os'
-        OnClick = Endereos1Click
-      end
       object N1: TMenuItem
         Caption = '-'
       end

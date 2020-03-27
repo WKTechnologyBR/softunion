@@ -1,30 +1,31 @@
 inherited frmCadastroClientes: TfrmCadastroClientes
   Caption = 'Cadastro de Clientes'
-  ClientHeight = 407
-  ClientWidth = 595
-  ExplicitWidth = 601
-  ExplicitHeight = 436
+  ClientHeight = 486
+  ClientWidth = 622
+  ExplicitWidth = 628
+  ExplicitHeight = 515
   PixelsPerInch = 96
   TextHeight = 13
   inherited PageControl1: TPageControl
-    Width = 595
-    Height = 407
-    ExplicitWidth = 595
-    ExplicitHeight = 407
+    Width = 622
+    Height = 486
+    ActivePage = tabPrincipal
+    ExplicitWidth = 622
+    ExplicitHeight = 486
     inherited tabPrincipal: TTabSheet
-      ExplicitWidth = 587
-      ExplicitHeight = 379
+      ExplicitWidth = 614
+      ExplicitHeight = 458
       inherited Panel1: TPanel
-        Width = 587
-        ExplicitWidth = 587
+        Width = 614
+        ExplicitWidth = 614
         inherited Shape1: TShape
-          Width = 577
+          Width = 604
           ExplicitWidth = 577
         end
       end
       inherited DBGrid1: TDBGrid
-        Width = 577
-        Height = 280
+        Width = 604
+        Height = 359
         Columns = <
           item
             Expanded = False
@@ -50,13 +51,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
           item
             Expanded = False
             FieldName = 'RG'
-            Width = 64
             Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DS_ENDERECOS'
-            Visible = False
           end
           item
             Expanded = False
@@ -67,7 +62,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
           end
           item
             Expanded = False
-            FieldName = 'FONE'
+            FieldName = 'TELEFONE'
             Visible = False
           end
           item
@@ -79,124 +74,171 @@ inherited frmCadastroClientes: TfrmCadastroClientes
             Expanded = False
             FieldName = 'EMAIL'
             Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'DS_ENDERECOS'
+            Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'CD_CIDADES'
+            Visible = False
           end>
       end
       inherited Panel2: TPanel
-        Top = 347
-        Width = 587
-        ExplicitTop = 347
-        ExplicitWidth = 587
+        Top = 426
+        Width = 614
+        ExplicitTop = 426
+        ExplicitWidth = 614
         DesignSize = (
-          587
+          614
           32)
         inherited btnNovoRegistro: TButton
-          Left = 486
-          ExplicitLeft = 486
+          Left = 513
+          ExplicitLeft = 513
         end
       end
     end
     inherited tabEdicao: TTabSheet
-      ExplicitWidth = 587
-      ExplicitHeight = 379
+      ExplicitWidth = 614
+      ExplicitHeight = 458
       inherited Shape2: TShape
-        Width = 577
-        Height = 337
-        ExplicitWidth = 577
-        ExplicitHeight = 337
+        Width = 604
+        Height = 416
+        ExplicitLeft = 5
+        ExplicitTop = 7
+        ExplicitWidth = 604
+        ExplicitHeight = 416
       end
       inherited Label1: TLabel
-        Top = 105
-        ExplicitTop = 105
+        Top = 25
+        ExplicitTop = 25
       end
       inherited Label2: TLabel
         Left = 193
-        Top = 105
+        Top = 25
         Width = 76
         Caption = 'Nome do cliente'
         ExplicitLeft = 193
-        ExplicitTop = 105
+        ExplicitTop = 25
         ExplicitWidth = 76
       end
       inherited Label4: TLabel
-        Top = 105
-        ExplicitTop = 105
+        Top = 25
+        ExplicitTop = 25
       end
-      object Label5: TLabel [4]
+      object Label8: TLabel [4]
         Left = 40
-        Top = 196
-        Width = 45
-        Height = 13
-        Caption = 'Endere'#231'o'
-      end
-      object Label8: TLabel [5]
-        Left = 40
-        Top = 147
+        Top = 67
         Width = 19
         Height = 13
         Caption = 'CPF'
       end
-      object Label11: TLabel [6]
+      object Label11: TLabel [5]
         Left = 255
-        Top = 147
+        Top = 67
         Width = 14
         Height = 13
         Caption = 'RG'
       end
-      object Label12: TLabel [7]
+      object Label12: TLabel [6]
         Left = 186
-        Top = 239
+        Top = 116
         Width = 33
         Height = 13
         Caption = 'Celular'
       end
-      object Label13: TLabel [8]
+      object Label13: TLabel [7]
         Left = 40
-        Top = 239
+        Top = 116
         Width = 42
         Height = 13
         Caption = 'Telefone'
       end
-      object Label14: TLabel [9]
-        Left = 332
-        Top = 239
+      object Label14: TLabel [8]
+        Left = 40
+        Top = 162
         Width = 28
         Height = 13
         Caption = 'E-mail'
       end
-      object Label15: TLabel [10]
+      object Label15: TLabel [9]
         Left = 408
-        Top = 196
+        Top = 116
         Width = 72
         Height = 13
         Caption = 'Data de Nasc.:'
       end
+      object Label10: TLabel [10]
+        Left = 40
+        Top = 212
+        Width = 38
+        Height = 13
+        Caption = 'Cidades'
+      end
+      object Label7: TLabel [11]
+        Left = 303
+        Top = 212
+        Width = 38
+        Height = 13
+        Caption = 'Estados'
+      end
+      object Label5: TLabel [12]
+        Left = 40
+        Top = 262
+        Width = 45
+        Height = 13
+        Caption = 'Endere'#231'o'
+      end
+      object Label6: TLabel [13]
+        Left = 40
+        Top = 310
+        Width = 28
+        Height = 13
+        Caption = 'Bairro'
+      end
+      object Label9: TLabel [14]
+        Left = 424
+        Top = 310
+        Width = 37
+        Height = 13
+        Caption = 'N'#250'mero'
+      end
+      object Label16: TLabel [15]
+        Left = 40
+        Top = 358
+        Width = 65
+        Height = 13
+        Caption = 'Complemento'
+      end
       inherited edtCodigo: TEdit
-        Top = 124
+        Top = 44
         Width = 147
-        ExplicitTop = 124
+        ExplicitTop = 44
         ExplicitWidth = 147
       end
       inherited edtDescricao: TEdit
         Left = 193
-        Top = 124
-        Width = 352
+        Top = 44
+        Width = 360
         ExplicitLeft = 193
-        ExplicitTop = 124
-        ExplicitWidth = 352
+        ExplicitTop = 44
+        ExplicitWidth = 360
       end
       inherited Panel3: TPanel
-        Top = 347
-        Width = 587
-        TabOrder = 9
-        ExplicitTop = 347
-        ExplicitWidth = 587
+        Top = 426
+        Width = 614
+        TabOrder = 14
+        ExplicitTop = 426
+        ExplicitWidth = 614
         inherited btnSalvar: TButton
-          Left = 486
-          ExplicitLeft = 486
+          Left = 513
+          ExplicitLeft = 513
         end
         inherited btnCancelar: TButton
-          Left = 366
-          ExplicitLeft = 366
+          Left = 393
+          ExplicitLeft = 393
         end
         inherited btnDeletar: TButton
           Visible = True
@@ -205,7 +247,7 @@ inherited frmCadastroClientes: TfrmCadastroClientes
       end
       object edtCPF: TEdit
         Left = 40
-        Top = 165
+        Top = 85
         Width = 209
         Height = 21
         CharCase = ecUpperCase
@@ -213,53 +255,94 @@ inherited frmCadastroClientes: TfrmCadastroClientes
       end
       object edtRG: TEdit
         Left = 255
-        Top = 165
-        Width = 290
+        Top = 86
+        Width = 298
         Height = 21
         CharCase = ecUpperCase
         TabOrder = 3
       end
       object edtCelular: TEdit
         Left = 186
-        Top = 256
-        Width = 140
-        Height = 21
-        CharCase = ecUpperCase
-        TabOrder = 6
-      end
-      object edtTelefone: TEdit
-        Left = 40
-        Top = 256
+        Top = 135
         Width = 140
         Height = 21
         CharCase = ecUpperCase
         TabOrder = 5
       end
+      object edtTelefone: TEdit
+        Left = 40
+        Top = 135
+        Width = 140
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 4
+      end
       object edtEmail: TEdit
-        Left = 332
-        Top = 256
-        Width = 213
+        Left = 40
+        Top = 178
+        Width = 513
         Height = 21
         CharCase = ecUpperCase
         TabOrder = 7
       end
-      object cbEnderecos: TComboBox
-        Left = 40
-        Top = 213
-        Width = 362
-        Height = 21
-        Hint = 'ENDERECOS'
-        Style = csDropDownList
-        TabOrder = 4
-      end
       object edtDataNascimento: TDateTimePicker
         Left = 408
-        Top = 213
-        Width = 137
+        Top = 135
+        Width = 145
         Height = 21
         Date = 43902.000000000000000000
         Time = 0.822922442130220600
+        TabOrder = 6
+      end
+      object cbCidades: TComboBox
+        Left = 40
+        Top = 231
+        Width = 257
+        Height = 21
+        Hint = 'CIDADES'
+        Style = csDropDownList
         TabOrder = 8
+      end
+      object edtEndereco: TEdit
+        Left = 40
+        Top = 283
+        Width = 513
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 10
+      end
+      object edtBairro: TEdit
+        Left = 40
+        Top = 329
+        Width = 378
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 11
+      end
+      object edtNumero: TEdit
+        Left = 424
+        Top = 329
+        Width = 129
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 12
+      end
+      object edtComplemento: TEdit
+        Left = 40
+        Top = 377
+        Width = 513
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 13
+      end
+      object cbEstados: TComboBox
+        Left = 303
+        Top = 231
+        Width = 250
+        Height = 21
+        Hint = 'ESTADOS'
+        Style = csDropDownList
+        TabOrder = 9
       end
     end
   end
@@ -277,8 +360,8 @@ inherited frmCadastroClientes: TfrmCadastroClientes
     object FDMemTable1RG: TStringField
       FieldName = 'RG'
     end
-    object FDMemTable1DS_ENDERECOS: TStringField
-      FieldName = 'DS_ENDERECOS'
+    object FDMemTable1DT_NASCIMENTO: TStringField
+      FieldName = 'DT_NASCIMENTO'
       Size = 60
     end
     object FDMemTable1TELEFONE: TStringField
@@ -290,6 +373,25 @@ inherited frmCadastroClientes: TfrmCadastroClientes
     object FDMemTable1EMAIL: TStringField
       FieldName = 'EMAIL'
       Size = 60
+    end
+    object FDMemTable1DS_ENDERECOS: TStringField
+      FieldName = 'DS_ENDERECOS'
+      Size = 60
+    end
+    object FDMemTable1BAIRRO: TStringField
+      FieldName = 'BAIRRO'
+      Size = 60
+    end
+    object FDMemTable1COMPLEMENTO: TStringField
+      FieldName = 'COMPLEMENTO'
+      Size = 60
+    end
+    object FDMemTable1NUMERO: TStringField
+      FieldName = 'NUMERO'
+      Size = 60
+    end
+    object FDMemTable1CD_CIDADES: TIntegerField
+      FieldName = 'CD_CIDADES'
     end
   end
 end

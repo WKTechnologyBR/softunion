@@ -3,6 +3,7 @@ inherited frmCadastroCidade: TfrmCadastroCidade
   PixelsPerInch = 96
   TextHeight = 13
   inherited PageControl1: TPageControl
+    ActivePage = tabPrincipal
     inherited tabPrincipal: TTabSheet
       inherited DBGrid1: TDBGrid
         Columns = <

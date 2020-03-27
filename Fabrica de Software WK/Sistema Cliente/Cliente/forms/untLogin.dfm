@@ -72,8 +72,6 @@ object frmLogin: TfrmLogin
     Caption = 'Cancelar'
     TabOrder = 3
     OnClick = Button1Click
-    ExplicitLeft = 149
-    ExplicitTop = 192
   end
   object Button2: TButton
     Left = 251
@@ -85,8 +83,6 @@ object frmLogin: TfrmLogin
     Default = True
     TabOrder = 4
     OnClick = Button2Click
-    ExplicitLeft = 230
-    ExplicitTop = 192
   end
   object edtToken: TEdit
     Left = 35

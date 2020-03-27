@@ -3,11 +3,8 @@ inherited frmCadastroEnderecos: TfrmCadastroEnderecos
   PixelsPerInch = 96
   TextHeight = 13
   inherited PageControl1: TPageControl
+    ActivePage = tabEdicao
     inherited tabPrincipal: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       inherited DBGrid1: TDBGrid
         Columns = <
           item
@@ -55,10 +52,6 @@ inherited frmCadastroEnderecos: TfrmCadastroEnderecos
       end
     end
     inherited tabEdicao: TTabSheet
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       inherited Shape2: TShape
         ExplicitLeft = 5
         ExplicitTop = 21

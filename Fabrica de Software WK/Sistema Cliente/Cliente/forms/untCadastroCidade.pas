@@ -118,6 +118,7 @@ begin
   try
     CCidades.FCD_ESTADOS := DM.ComboBoxRetornar(cbEstados);
     CCidades.FDS_CIDADES := edtDescricao.Text;
+    CCidades.FDT_REGISTRO := Copy(FormatDateTime('YYYY.MM.DD hh:mm', NOW), 1, 15);
     CCidades.FCD_USUARIO := DM.CD_USUARIO;
 
     try

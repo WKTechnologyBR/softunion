@@ -13,8 +13,6 @@ type
   TfrmCadastroPessoas = class(TfrmPadrao)
     edtDataNascimento: TDateTimePicker;
     Label15: TLabel;
-    cbEnderecos: TComboBox;
-    Label7: TLabel;
     cbTipoPessoa: TComboBox;
     Label8: TLabel;
     edtCPFCNPJ: TEdit;
@@ -32,7 +30,6 @@ type
     FDMemTable1NM_PESSOAS: TStringField;
     FDMemTable1DT_NASCIMENTO: TStringField;
     FDMemTable1CD_SEXO: TIntegerField;
-    FDMemTable1CD_ENDERECOS: TIntegerField;
     FDMemTable1CPF: TStringField;
     FDMemTable1CD_ESTADO_CIVIL: TIntegerField;
     FDMemTable1NM_FANTASIA: TStringField;
@@ -41,9 +38,27 @@ type
     FDMemTable1TIPO_PESSOA: TIntegerField;
     FDMemTable1DT_REGISTRO: TStringField;
     FDMemTable1CD_USUARIOS: TIntegerField;
+    Label10: TLabel;
+    cbCidades: TComboBox;
+    Label11: TLabel;
+    edtEndereco: TEdit;
+    Label12: TLabel;
+    edtBairro: TEdit;
+    edtNumero: TEdit;
+    Label13: TLabel;
+    Label14: TLabel;
+    edtComplemento: TEdit;
+    cbEstados: TComboBox;
+    Label7: TLabel;
+    FDMemTable1BAIRRO: TStringField;
+    FDMemTable1COMPLEMENTO: TStringField;
+    FDMemTable1NUMERO: TStringField;
+    FDMemTable1CD_CIDADES: TIntegerField;
+    FDMemTable1DS_ENDERECOS: TStringField;
     procedure btnSalvarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbTipoPessoaCloseUp(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -60,19 +75,21 @@ const aSQLPadrao: String = 'SELECT '+
                            'P.NM_PESSOAS, '+
                            'P.DT_NASCIMENTO, '+
                            'P.CD_SEXO, '+
-                           'S.DS_SEXO, '+
-                           'P.CD_ENDERECOS, '+
                            'P.CPF, '+
                            'P.CD_ESTADO_CIVIL, '+
                            'P.NM_FANTASIA, '+
                            'P.CNPJ, '+
                            'P.RAZAO_SOCIAL, '+
                            'P.TIPO_PESSOA, '+
-                           //'P.DT_REGISTRO, '+
-                           'P.CD_USUARIOS '+
+                           'P.DT_REGISTRO, '+
+                           'P.CD_USUARIOS, '+
+                           'P.BAIRRO, '+
+                           'P.COMPLEMENTO, '+
+                           'P.NUMERO, '+
+                           'P.CD_CIDADES, '+
+                           'P.DS_ENDERECOS '+
 
-                           'FROM PESSOAS P ' +
-                           'LEFT JOIN SEXO S ON S.CD_SEXO = P.CD_SEXO ';
+                           'FROM PESSOAS P';
 
 implementation
 
@@ -86,47 +103,6 @@ begin
     edtDescricao.SetFocus;
     Abort;
   end;
-//  if Trim(edtCPF.Text) = '' then
-//  begin
-//    ShowMessage('CPF é um campo obrigatório.');
-//    edtCPF.SetFocus;
-//    Abort;
-//  end;
-//
-//  if Trim(edtRG.Text) = '' then
-//  begin
-//    ShowMessage('RG é um campo obrigatório.');
-//    edtRG.SetFocus;
-//    Abort;
-//  end;
-//
-//  if cbEnderecos.ItemIndex = -1 then
-//  begin
-//    ShowMessage('Endereço é um campo obrigatório.');
-//    cbEnderecos.SetFocus;
-//    Abort;
-//  end;
-//
-//  if Trim(edtTelefone.Text) = '' then
-//  begin
-//    ShowMessage('Telefone é um campo obrigatório.');
-//    edtTelefone.SetFocus;
-//    Abort;
-//  end;
-//
-//  if Trim(edtCelular.Text) = '' then
-//  begin
-//    ShowMessage('Celular é um campo obrigatório.');
-//    edtCelular.SetFocus;
-//    Abort;
-//  end;
-//
-//  if Trim(edtEmail.Text) = '' then
-//  begin
-//    ShowMessage('E-mail é um campo obrigatório.');
-//    edtEmail.SetFocus;
-//    Abort;
-//  end;
 
   try
     GravarRegistro;
@@ -140,8 +116,8 @@ begin
   inherited;
   case cbTipoPessoa.ItemIndex of
     0:begin  //Pessoa física
-        Panel4.Left:= cbEnderecos.Left;
-        Panel4.Top := cbEnderecos.Top + 33;
+        Panel4.Left:= edtDescricao.Left;
+        Panel4.Top := edtDescricao.Top + 35;
         Panel4.Visible:=True;
 
         lblNomeFantasia.Visible := False;
@@ -162,12 +138,32 @@ begin
   end;
 end;
 
+procedure TfrmCadastroPessoas.DBGrid1DblClick(Sender: TObject);
+begin
+  inherited;
+  edtCodigo.Text    :=  FDMemTable1.FieldByName('CD_PESSOAS').AsString;
+  edtDescricao.Text :=  FDMemTable1.FieldByName('NM_PESSOAS').AsString;
+
+  edtDataNascimento.DateTime  :=  FDMemTable1.FieldByName('DT_NASCIMENTO').AsDateTime;
+  cbSexo.ItemIndex            :=  cbSexo.Items.IndexOf(FDMemTable1.FieldByName('CD_SEXO').AsString);
+  edtCPFCNPJ.Text             :=  FDMemTable1.FieldByName('CPF').AsString;
+  //DM.ComboBoxRetornar(cbEstadoCivil);
+  edtNomeFantasia.Text  :=  FDMemTable1.FieldByName('NM_FANTASIA').AsString;
+  cbTipoPessoa.ItemIndex  :=  FDMemTable1.FieldByName('TIPO_PESSOA').AsInteger;
+  //DM.ComboBoxRetornar(cbCidades);
+  //DM.ComboBoxRetornar(cbEstados);
+  edtEndereco.Text  :=  FDMemTable1.FieldByName('DS_ENDERECOS').AsString;
+  edtBairro.Text  :=  FDMemTable1.FieldByName('BAIRRO').AsString;
+  edtComplemento.Text  :=  FDMemTable1.FieldByName('COMPLEMENTO').AsString;
+  edtNumero.Text  :=  FDMemTable1.FieldByName('NUMERO').AsString;
+end;
+
 procedure TfrmCadastroPessoas.FormCreate(Sender: TObject);
 begin
   inherited;
   //Pessoa física
-  Panel4.Left:= cbEnderecos.Left;
-  Panel4.Top := cbEnderecos.Top + 33;
+  Panel4.Left:= edtDescricao.Left;
+  Panel4.Top := edtDescricao.Top + 35;
   Panel4.Visible:=True;
   Listar(aSQLPadrao);
 end;
@@ -176,7 +172,26 @@ procedure TfrmCadastroPessoas.GravarRegistro;
 var
   CPessoas: TPessoas;
 begin
+  CPessoas:=Nil;
+  CPessoas:=TPessoas.Create;
+
   try
+    CPessoas.FNM_PESSOAS          := edtDescricao.Text;
+    CPessoas.FDT_NASCIMENTO       := Copy(FormatDateTime('YYYY.MM.DD', edtDataNascimento.Date), 1, 10);
+    CPessoas.FCD_SEXO             := DM.ComboBoxRetornar(cbSexo);
+    CPessoas.FCPF                 := edtCPFCNPJ.Text;
+    CPessoas.FCD_ESTADO_CIVIL     := DM.ComboBoxRetornar(cbEstadoCivil);
+    CPessoas.FNM_FANTASIA         := edtNomeFantasia.Text;
+    CPessoas.FTIPO_PESSOA         := cbTipoPessoa.ItemIndex;
+    CPessoas.FCD_CIDADES          := DM.ComboBoxRetornar(cbCidades);
+    CPessoas.FCD_ESTADOS          := DM.ComboBoxRetornar(cbEstados);
+    CPessoas.FDS_ENDERECOS        := edtEndereco.Text;
+    CPessoas.FBAIRRO              := edtBairro.Text;
+    CPessoas.FCOMPLEMENTO         := edtComplemento.Text;
+    CPessoas.FNUMERO              := edtNumero.Text;
+    CPessoas.FDT_REGISTRO         := Copy(FormatDateTime('YYYY.MM.DD hh:mm', NOW), 1, 15);
+    CPessoas.FCD_USUARIOS         := DM.CD_USUARIO;
+
     try
       if btnSalvar.Caption = 'Salvar' then
       begin

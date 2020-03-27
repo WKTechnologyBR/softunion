@@ -11,7 +11,6 @@ uses
 
 type
   TfrmCadastroClientes = class(TfrmPadrao)
-    Label5: TLabel;
     Label8: TLabel;
     edtCPF: TEdit;
     edtRG: TEdit;
@@ -22,17 +21,33 @@ type
     Label13: TLabel;
     edtEmail: TEdit;
     Label14: TLabel;
-    cbEnderecos: TComboBox;
     Label15: TLabel;
     edtDataNascimento: TDateTimePicker;
     FDMemTable1CD_CLIENTES: TIntegerField;
     FDMemTable1NM_CLIENTES: TStringField;
     FDMemTable1CPF: TStringField;
     FDMemTable1RG: TStringField;
-    FDMemTable1DS_ENDERECOS: TStringField;
     FDMemTable1TELEFONE: TStringField;
     FDMemTable1CELULAR: TStringField;
     FDMemTable1EMAIL: TStringField;
+    cbCidades: TComboBox;
+    Label10: TLabel;
+    Label7: TLabel;
+    Label5: TLabel;
+    edtEndereco: TEdit;
+    Label6: TLabel;
+    edtBairro: TEdit;
+    edtNumero: TEdit;
+    Label9: TLabel;
+    Label16: TLabel;
+    edtComplemento: TEdit;
+    cbEstados: TComboBox;
+    FDMemTable1BAIRRO: TStringField;
+    FDMemTable1COMPLEMENTO: TStringField;
+    FDMemTable1NUMERO: TStringField;
+    FDMemTable1CD_CIDADES: TIntegerField;
+    FDMemTable1DS_ENDERECOS: TStringField;
+    FDMemTable1DT_NASCIMENTO: TStringField;
     procedure FormCreate(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
     procedure btnDeletarClick(Sender: TObject);
@@ -53,13 +68,19 @@ const aSQLPadrao: String = 'SELECT '+
                            'C.NM_CLIENTES, '+
                            'C.CPF, '+
                            'C.RG, '+
-                           'E.DS_ENDERECOS, '+
-                           //'C.DT_NASCIMENTO, '+
+                           'C.DT_NASCIMENTO, '+
                            'C.TELEFONE, '+
                            'C.CELULAR, '+
-                           'C.EMAIL '+
-                           'FROM CLIENTES C '+
-                           'LEFT JOIN ENDERECOS E ON E.CD_ENDERECOS = C.CD_ENDERECOS';
+                           'C.EMAIL, '+
+                           'C.DS_ENDERECOS, '+
+                           'C.DT_REGISTRO, '+
+                           'C.CD_USUARIOS, '+
+                           'C.BAIRRO, '+
+                           'C.COMPLEMENTO, '+
+                           'C.NUMERO, '+
+                           'C.CD_CIDADES '+
+
+                           'FROM CLIENTES C ';
 implementation
 
 {$R *.dfm}
@@ -105,13 +126,6 @@ begin
     Abort;
   end;
 
-  if cbEnderecos.ItemIndex = -1 then
-  begin
-    ShowMessage('Endereço é um campo obrigatório.');
-    cbEnderecos.SetFocus;
-    Abort;
-  end;
-
   if Trim(edtTelefone.Text) = '' then
   begin
     ShowMessage('Telefone é um campo obrigatório.');
@@ -144,12 +158,21 @@ procedure TfrmCadastroClientes.DBGrid1DblClick(Sender: TObject);
 begin
   inherited;
   edtCodigo.Text        :=  FDMemTable1.FieldByName('CD_CLIENTES').AsString;
-  edtDescricao.Text     :=  FDMemTable1.FieldByName('DS_CLIENTES').AsString;
+  edtDescricao.Text     :=  FDMemTable1.FieldByName('NM_CLIENTES').AsString;
+  edtCPF.Text           :=  FDMemTable1.FieldByName('CPF').AsString;
   edtRG.Text            :=  FDMemTable1.FieldByName('RG').AsString;
-  cbEnderecos.ItemIndex :=  cbEnderecos.Items.IndexOf(FDMemTable1.FieldByName('DS_ENDERECOS').AsString);
-  edtTelefone.Text      :=  FDMemTable1.FieldByName('FONE').AsString;
+
+  edtTelefone.Text      :=  FDMemTable1.FieldByName('TELEFONE').AsString;
   edtCelular.Text       :=  FDMemTable1.FieldByName('CELULAR').AsString;
   edtEmail.Text         :=  FDMemTable1.FieldByName('EMAIL').AsString;
+
+  edtDataNascimento.DateTime  :=  FDMemTable1.FieldByName('DT_NASCIMENTO').AsDateTime;
+  //DM.ComboBoxRetornar(cbCidades);
+  //DM.ComboBoxRetornar(cbEstados);
+  edtEndereco.Text      :=  FDMemTable1.FieldByName('DS_ENDERECOS').AsString;
+  edtBairro.Text        :=  FDMemTable1.FieldByName('BAIRRO').AsString;
+  edtComplemento.Text   :=  FDMemTable1.FieldByName('COMPLEMENTO').AsString;
+  edtNumero.Text        :=  FDMemTable1.FieldByName('NUMERO').AsString;
 end;
 
 procedure TfrmCadastroClientes.FormCreate(Sender: TObject);
@@ -165,16 +188,22 @@ begin
   CClientes:=Nil;
   CClientes:=TClientes.Create;
   try
-    CClientes.FNM_CLIENTES:= edtDescricao.Text;
-    CClientes.FCPF := edtCPF.Text;
-    CClientes.FRG := edtRG.Text;
-    CClientes.FCD_ENDERECOS := DM.ComboBoxRetornar(cbEnderecos);
-    // CClientes.FDT_NASCIMENTO:= DateToStr(edtDataNascimento.Date);
-    CClientes.FTELEFONE := edtTelefone.Text;
-    CClientes.FCELULAR := edtCelular.Text;
-    CClientes.FEMAIL := edtEmail.Text;
-    // CClientes.FDT_REGISTRO:= Now;
-    CClientes.FCD_USUARIOS := 1;
+    CClientes.FNM_CLIENTES  := edtDescricao.Text;
+    CClientes.FCPF          := edtCPF.Text;
+    CClientes.FRG           := edtRG.Text;
+    CClientes.FDT_NASCIMENTO:= DateToStr(edtDataNascimento.Date);
+    CClientes.FTELEFONE     := edtTelefone.Text;
+    CClientes.FCELULAR      := edtCelular.Text;
+    CClientes.FEMAIL        := edtEmail.Text;
+
+    CClientes.FCD_CIDADES   := DM.ComboBoxRetornar(cbCidades);
+    CClientes.FCD_ESTADOS   := DM.ComboBoxRetornar(cbEstados);
+    CClientes.FDS_ENDERECOS := edtEndereco.Text;
+    CClientes.FBAIRRO       := edtBairro.Text;
+    CClientes.FCOMPLEMENTO  := edtComplemento.Text;
+    CClientes.FNUMERO       := edtNumero.Text;
+    CClientes.FDT_REGISTRO  := Copy(FormatDateTime('YYYY.MM.DD hh:mm', NOW), 1, 15);
+    CClientes.FCD_USUARIOS  := DM.CD_USUARIO;
 
     try
       if btnSalvar.Caption = 'Salvar' then
@@ -217,7 +246,6 @@ begin
   edtDescricao.Text      := '';
   edtCPF.Text            := '';
   edtRG.Text             := '';
-  cbEnderecos.ItemIndex  := -1;
   edtDataNascimento.Date := Now;
   edtTelefone.Text       := '';
   edtCelular.Text        := '';

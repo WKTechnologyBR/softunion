@@ -23,7 +23,7 @@ object frmPadrao: TfrmPadrao
     Top = 0
     Width = 500
     Height = 320
-    ActivePage = tabPrincipal
+    ActivePage = tabEdicao
     Align = alClient
     TabOrder = 0
     object tabPrincipal: TTabSheet

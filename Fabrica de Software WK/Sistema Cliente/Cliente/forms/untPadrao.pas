@@ -3,6 +3,7 @@ unit untPadrao;
 interface
 
 uses
+  Clipbrd,
   REST.JSON,
   uDWJSONObject,
   uDWConsts,
@@ -19,6 +20,16 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin, frxDBSet, frxExportPDF, frxClass, Vcl.Grids,
   Vcl.DBGrids, ClasseCadastro, uDWConstsData, uDWDataset,
   Data.DB, Vcl.StdCtrls;
+
+type
+  //Usado para mover o cursor no Datepicker
+  TDateTimePicker = class(Vcl.ComCtrls.TDateTimePicker)
+  protected
+    procedure Change; override;
+  private
+    FMoveCursor: Boolean;
+    procedure WMKeyDown(var Message: TWMKeyDown); message WM_KEYDOWN;
+  end;
 
 type
   TfrmPadrao = class(TForm)
@@ -60,6 +71,8 @@ type
     procedure GravarServidorJson(aObject: TObject; aTabela: String; aParam: String = 'Gravar');
     procedure AtualizarServidor(aObject: TObject; aTabela: String; aID: String);
     procedure DeletarServidor(aTabela: String; aID: String);
+
+    procedure LimparCampos;
   end;
 
 var
@@ -73,6 +86,7 @@ uses untDM, FireDAC.Comp.Client;
 
 procedure TfrmPadrao.btnNovoRegistroClick(Sender: TObject);
 begin
+  LimparCampos;
   edtCodigo.Text    :=  '';
   edtDescricao.Text :=  '';
   btnSalvar.Caption :=  'Salvar';
@@ -114,6 +128,7 @@ end;
 
 procedure TfrmPadrao.btnCancelarClick(Sender: TObject);
 begin
+  LimparCampos;
   PageControl1.ActivePage:=tabPrincipal;
 end;
 
@@ -121,8 +136,6 @@ procedure TfrmPadrao.DBGrid1DblClick(Sender: TObject);
 begin
   if FDMemTable1.RecordCount > 0 then
   begin
-//    edtCodigo.Text    :=  FDMemTable1.FieldByName('CD_CADASTRO').AsString;
-//    edtDescricao.Text :=  FDMemTable1.FieldByName('DS_CADASTRO').AsString;
     btnSalvar.Caption :=  'Atualizar';
     PageControl1.ActivePage:=tabEdicao;
   end else ShowMessage('Selecione um item para editar.');
@@ -159,6 +172,8 @@ var
   dwParams      : TDWParams;
   vErrorMessage : String;
 begin
+//  Clipboard.AsText:=TJson.ObjectToJsonString(aObject);
+
   dwParams      := Nil;
   vErrorMessage := '';
 
@@ -190,8 +205,33 @@ begin
 end;
 procedure TfrmPadrao.FormCreate(Sender: TObject);
 begin
+  LimparCampos;
   OcultarSheets(PageControl1);
   PreencherComboBox;
+end;
+
+procedure TfrmPadrao.LimparCampos;
+var
+   I: integer;
+begin
+   try
+      for I:= 0 to  ComponentCount -1 do
+      begin
+        if Components[I] is tEdit then
+        begin
+           (Components[I] as tEdit).Text:= '';
+        end
+        else if Components[I] is TComboBox then
+        begin
+           //(Components[I] as TComboBox).ItemIndex:= -1;
+        end
+      end;
+
+      except on  e: exception do
+      begin
+        messageDlg(E.Message, mtError, [mbOk], 0);
+      end;
+   end;
 end;
 
 procedure TfrmPadrao.Listar(SQL_TEXTO: String);
@@ -221,30 +261,29 @@ begin
           dwParams.ItemsString['Token'].AsString  := DM.TOKEN;
           DM.DWClientEvents1.SendEvent('Retornar', dwParams, vErrorMessage);
 
-          RDWClientSQL.OpenJson(vErrorMessage);
-
-          RDWClientSQL.First;
-          if RDWClientSQL.RecordCount > 0 then
+          if vErrorMessage <> '' then
           begin
-            RDWClientSQL.DisableControls;
-            FDMemTable1.DisableControls;
-            while not RDWClientSQL.Eof do
+            RDWClientSQL.OpenJson(vErrorMessage);
+
+            RDWClientSQL.First;
+            if RDWClientSQL.RecordCount > 0 then
             begin
-              FDMemTable1.Append;
-              for I := 0 to FDMemTable1.FieldCount - 1 do
+              RDWClientSQL.DisableControls;
+              FDMemTable1.DisableControls;
+              while not RDWClientSQL.Eof do
               begin
-                FDMemTable1.Fields.Fields[I].AsString:=RDWClientSQL.Fields.Fields[I].AsString;
+                FDMemTable1.Append;
+                for I := 0 to FDMemTable1.FieldCount - 1 do
+                begin
+                  FDMemTable1.Fields.Fields[I].AsString:=RDWClientSQL.Fields.Fields[I].AsString;
+                end;
+                FDMemTable1.Post;
+                RDWClientSQL.Next
               end;
-              FDMemTable1.Post;
-              RDWClientSQL.Next
+              RDWClientSQL.EnableControls;
+              FDMemTable1.EnableControls;
+              FDMemTable1.First;
             end;
-            RDWClientSQL.EnableControls;
-            FDMemTable1.EnableControls;
-            FDMemTable1.First;
-          end;
-
-          if vErrorMessage = '' then
-          begin
             lblQuantidadeArtigos.Caption:='Quantidade de Itens: ' + IntToStr(FDMemTable1.RecordCount);
           end;
 
@@ -300,6 +339,34 @@ begin
   except on E: Exception do
     ShowMessage(E.Message);
   end;
+end;
+
+{ TDateTimePicker }
+
+procedure TDateTimePicker.Change;
+const
+  CDtSep = '/';
+var
+  FEdit: TCustomEdit;
+begin
+  inherited;
+  if not DroppedDown then
+    if DateFormat = dfShort then
+      if Format.Contains(CDtSep) then
+        if FMoveCursor then
+        begin
+          FEdit := TCustomEdit(Self);
+          if Trim(FEdit.Text)[FEdit.SelStart + 2] = CDtSep then
+            Self.Perform($0100, $27, 0);
+        end;
+end;
+
+procedure TDateTimePicker.WMKeyDown(var Message: TWMKeyDown);
+begin
+  if not DoKeyDown(Message) then
+    inherited;
+  UpdateUIState(Message.CharCode);
+  FMoveCursor := Message.CharCode in [96 .. 105];
 end;
 
 end.
