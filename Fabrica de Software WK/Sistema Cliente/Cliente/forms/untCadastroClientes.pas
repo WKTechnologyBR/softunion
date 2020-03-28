@@ -48,6 +48,8 @@ type
     FDMemTable1CD_CIDADES: TIntegerField;
     FDMemTable1DS_ENDERECOS: TStringField;
     FDMemTable1DT_NASCIMENTO: TStringField;
+    FDMemTable1DS_ESTADOS: TStringField;
+    FDMemTable1DS_CIDADES: TStringField;
     procedure FormCreate(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
     procedure btnDeletarClick(Sender: TObject);
@@ -73,14 +75,18 @@ const aSQLPadrao: String = 'SELECT '+
                            'C.CELULAR, '+
                            'C.EMAIL, '+
                            'C.DS_ENDERECOS, '+
-                           'C.DT_REGISTRO, '+
-                           'C.CD_USUARIOS, '+
                            'C.BAIRRO, '+
                            'C.COMPLEMENTO, '+
                            'C.NUMERO, '+
-                           'C.CD_CIDADES '+
+                           'C.CD_CIDADES, '+
+                           'CC.DS_CIDADES, '+
+                           'E.DS_ESTADOS, '+
+                           'C.DT_REGISTRO, '+
+                           'C.CD_USUARIOS '+
 
-                           'FROM CLIENTES C ';
+                           'FROM CLIENTES C '+
+                           'LEFT JOIN CIDADES CC ON CC.CD_CIDADES = C.CD_CIDADES '+
+                           'LEFT JOIN ESTADOS E ON E.CD_ESTADOS = C.CD_ESTADOS ';
 implementation
 
 {$R *.dfm}
@@ -157,22 +163,22 @@ end;
 procedure TfrmCadastroClientes.DBGrid1DblClick(Sender: TObject);
 begin
   inherited;
-  edtCodigo.Text        :=  FDMemTable1.FieldByName('CD_CLIENTES').AsString;
-  edtDescricao.Text     :=  FDMemTable1.FieldByName('NM_CLIENTES').AsString;
-  edtCPF.Text           :=  FDMemTable1.FieldByName('CPF').AsString;
-  edtRG.Text            :=  FDMemTable1.FieldByName('RG').AsString;
+  edtCodigo.Text              :=  FDMemTable1.FieldByName('CD_CLIENTES').AsString;
+  edtDescricao.Text           :=  FDMemTable1.FieldByName('NM_CLIENTES').AsString;
+  edtCPF.Text                 :=  FDMemTable1.FieldByName('CPF').AsString;
+  edtRG.Text                  :=  FDMemTable1.FieldByName('RG').AsString;
 
-  edtTelefone.Text      :=  FDMemTable1.FieldByName('TELEFONE').AsString;
-  edtCelular.Text       :=  FDMemTable1.FieldByName('CELULAR').AsString;
-  edtEmail.Text         :=  FDMemTable1.FieldByName('EMAIL').AsString;
+  edtTelefone.Text            :=  FDMemTable1.FieldByName('TELEFONE').AsString;
+  edtCelular.Text             :=  FDMemTable1.FieldByName('CELULAR').AsString;
+  edtEmail.Text               :=  FDMemTable1.FieldByName('EMAIL').AsString;
 
   edtDataNascimento.DateTime  :=  FDMemTable1.FieldByName('DT_NASCIMENTO').AsDateTime;
-  //DM.ComboBoxRetornar(cbCidades);
-  //DM.ComboBoxRetornar(cbEstados);
-  edtEndereco.Text      :=  FDMemTable1.FieldByName('DS_ENDERECOS').AsString;
-  edtBairro.Text        :=  FDMemTable1.FieldByName('BAIRRO').AsString;
-  edtComplemento.Text   :=  FDMemTable1.FieldByName('COMPLEMENTO').AsString;
-  edtNumero.Text        :=  FDMemTable1.FieldByName('NUMERO').AsString;
+  cbCidades.ItemIndex         :=  cbCidades.Items.IndexOf(FDMemTable1.FieldByName('DS_CIDADES').AsString);
+  cbEstados.ItemIndex         :=  cbEstados.Items.IndexOf(FDMemTable1.FieldByName('DS_ESTADOS').AsString);
+  edtEndereco.Text            :=  FDMemTable1.FieldByName('DS_ENDERECOS').AsString;
+  edtBairro.Text              :=  FDMemTable1.FieldByName('BAIRRO').AsString;
+  edtComplemento.Text         :=  FDMemTable1.FieldByName('COMPLEMENTO').AsString;
+  edtNumero.Text              :=  FDMemTable1.FieldByName('NUMERO').AsString;
 end;
 
 procedure TfrmCadastroClientes.FormCreate(Sender: TObject);

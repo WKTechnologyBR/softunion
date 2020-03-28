@@ -1,31 +1,31 @@
 inherited frmCadastroPessoas: TfrmCadastroPessoas
   Caption = 'Cadastro de Pessoas'
-  ClientHeight = 482
-  ClientWidth = 637
-  ExplicitWidth = 643
-  ExplicitHeight = 511
+  ClientHeight = 481
+  ClientWidth = 634
+  ExplicitWidth = 640
+  ExplicitHeight = 510
   PixelsPerInch = 96
   TextHeight = 13
   inherited PageControl1: TPageControl
-    Width = 637
-    Height = 482
-    ActivePage = tabPrincipal
+    Width = 634
+    Height = 481
+    ActivePage = tabEdicao
     ExplicitWidth = 637
     ExplicitHeight = 482
     inherited tabPrincipal: TTabSheet
       ExplicitWidth = 629
       ExplicitHeight = 454
       inherited Panel1: TPanel
-        Width = 629
+        Width = 626
         ExplicitWidth = 629
         inherited Shape1: TShape
-          Width = 619
+          Width = 616
           ExplicitWidth = 574
         end
       end
       inherited DBGrid1: TDBGrid
-        Width = 619
-        Height = 355
+        Width = 616
+        Height = 354
         Columns = <
           item
             Expanded = False
@@ -45,22 +45,26 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
           end>
       end
       inherited Panel2: TPanel
-        Top = 422
-        Width = 629
+        Top = 421
+        Width = 626
         ExplicitTop = 422
         ExplicitWidth = 629
         inherited btnNovoRegistro: TButton
-          Left = 529
-          ExplicitLeft = 529
+          Left = 530
+          Top = 3
+          ExplicitLeft = 530
+          ExplicitTop = 3
         end
       end
     end
     inherited tabEdicao: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 24
       ExplicitWidth = 629
       ExplicitHeight = 454
       inherited Shape2: TShape
-        Width = 619
-        Height = 412
+        Width = 616
+        Height = 411
         ExplicitLeft = 5
         ExplicitTop = 7
         ExplicitWidth = 686
@@ -193,19 +197,19 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
         ExplicitWidth = 252
       end
       inherited Panel3: TPanel
-        Top = 422
-        Width = 629
+        Top = 421
+        Width = 626
         TabOrder = 13
         ExplicitTop = 422
         ExplicitWidth = 629
         inherited btnSalvar: TButton
-          Left = 529
-          Top = 3
-          ExplicitLeft = 529
-          ExplicitTop = 3
+          Left = 526
+          Top = 5
+          ExplicitLeft = 526
+          ExplicitTop = 5
         end
         inherited btnCancelar: TButton
-          Left = 409
+          Left = 406
           ExplicitLeft = 409
         end
       end
@@ -406,6 +410,25 @@ inherited frmCadastroPessoas: TfrmCadastroPessoas
     end
     object FDMemTable1DS_ENDERECOS: TStringField
       FieldName = 'DS_ENDERECOS'
+      Size = 60
+    end
+    object FDMemTable1CD_ESTADOS: TIntegerField
+      FieldName = 'CD_ESTADOS'
+    end
+    object FDMemTable1DS_ESTADO_CIVIL: TStringField
+      FieldName = 'DS_ESTADO_CIVIL'
+      Size = 60
+    end
+    object FDMemTable1DS_CIDADES: TStringField
+      FieldName = 'DS_CIDADES'
+      Size = 60
+    end
+    object FDMemTable1DS_ESTADOS: TStringField
+      FieldName = 'DS_ESTADOS'
+      Size = 60
+    end
+    object FDMemTable1DS_SEXO: TStringField
+      FieldName = 'DS_SEXO'
       Size = 60
     end
   end

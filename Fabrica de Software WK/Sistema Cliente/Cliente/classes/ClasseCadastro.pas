@@ -106,25 +106,52 @@ type
   end;
 
 type
-  TPessoas = class
+  TPessoasJuridica = class
   private
     NM_PESSOAS: String;
-    DT_NASCIMENTO: String;
-    CD_SEXO: Integer;
-    CPF: String;
-    CD_ESTADO_CIVIL: Integer;
     NM_FANTASIA: String;
     CNPJ: String;
     RAZAO_SOCIAL: String;
     TIPO_PESSOA: Integer;
-
     CD_CIDADES: Integer;
     CD_ESTADOS: Integer;
     DS_ENDERECOS: String;
     BAIRRO: String;
     COMPLEMENTO: String;
     NUMERO: String;
+    DT_REGISTRO: String;
+    CD_USUARIOS: Integer;
+  public
+    property FNM_PESSOAS: String read NM_PESSOAS write NM_PESSOAS;
+    property FNM_FANTASIA: String read NM_FANTASIA write NM_FANTASIA;
+    property FCNPJ: String read CNPJ write CNPJ;
+    property FRAZAO_SOCIAL: String read RAZAO_SOCIAL write RAZAO_SOCIAL;
+    property FTIPO_PESSOA: Integer read TIPO_PESSOA write TIPO_PESSOA;
+    property FCD_CIDADES: Integer read CD_CIDADES write CD_CIDADES;
+    property FCD_ESTADOS: Integer read CD_ESTADOS write CD_ESTADOS;
+    property FDS_ENDERECOS: String read DS_ENDERECOS write DS_ENDERECOS;
+    property FBAIRRO: String read BAIRRO write BAIRRO;
+    property FCOMPLEMENTO: String read COMPLEMENTO write COMPLEMENTO;
+    property FNUMERO: String read NUMERO write NUMERO;
+    property FDT_REGISTRO: String read DT_REGISTRO write DT_REGISTRO;
+    property FCD_USUARIOS: Integer read CD_USUARIOS write CD_USUARIOS;
+  end;
 
+type
+  TPessoasFisica = class
+  private
+    NM_PESSOAS: String;
+    DT_NASCIMENTO: String;
+    CD_SEXO: Integer;
+    CPF: String;
+    CD_ESTADO_CIVIL: Integer;
+    TIPO_PESSOA: Integer;
+    CD_CIDADES: Integer;
+    CD_ESTADOS: Integer;
+    DS_ENDERECOS: String;
+    BAIRRO: String;
+    COMPLEMENTO: String;
+    NUMERO: String;
     DT_REGISTRO: String;
     CD_USUARIOS: Integer;
   public
@@ -133,18 +160,13 @@ type
     property FCD_SEXO: Integer read CD_SEXO write CD_SEXO;
     property FCPF: String read CPF write CPF;
     property FCD_ESTADO_CIVIL: Integer read CD_ESTADO_CIVIL write CD_ESTADO_CIVIL;
-    property FNM_FANTASIA: String read NM_FANTASIA write NM_FANTASIA;
-    property FCNPJ: String read CNPJ write CNPJ;
-    property FRAZAO_SOCIAL: String read RAZAO_SOCIAL write RAZAO_SOCIAL;
     property FTIPO_PESSOA: Integer read TIPO_PESSOA write TIPO_PESSOA;
-
     property FCD_CIDADES: Integer read CD_CIDADES write CD_CIDADES;
     property FCD_ESTADOS: Integer read CD_ESTADOS write CD_ESTADOS;
     property FDS_ENDERECOS: String read DS_ENDERECOS write DS_ENDERECOS;
     property FBAIRRO: String read BAIRRO write BAIRRO;
     property FCOMPLEMENTO: String read COMPLEMENTO write COMPLEMENTO;
     property FNUMERO: String read NUMERO write NUMERO;
-
     property FDT_REGISTRO: String read DT_REGISTRO write DT_REGISTRO;
     property FCD_USUARIOS: Integer read CD_USUARIOS write CD_USUARIOS;
   end;

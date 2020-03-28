@@ -223,7 +223,7 @@ begin
         end
         else if Components[I] is TComboBox then
         begin
-           //(Components[I] as TComboBox).ItemIndex:= -1;
+           (Components[I] as TComboBox).ItemIndex:= 0;
         end
       end;
 
