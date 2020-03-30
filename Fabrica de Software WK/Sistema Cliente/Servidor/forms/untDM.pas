@@ -3,7 +3,7 @@ unit untDM;
 interface
 
 uses
-  OnGuard, OgUtil,
+  VCL.OnGuard, VCL.OgUtil,
 
 {$REGION 'Token'}
   EncdDecd,

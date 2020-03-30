@@ -133,8 +133,6 @@ object frmPadrao: TfrmPadrao
     object tabEdicao: TTabSheet
       Caption = 'tabEdicao'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 28
       object Shape2: TShape
         AlignWithMargins = True
         Left = 5

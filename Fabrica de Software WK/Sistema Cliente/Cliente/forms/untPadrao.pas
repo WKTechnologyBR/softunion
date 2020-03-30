@@ -91,6 +91,7 @@ begin
   edtDescricao.Text :=  '';
   btnSalvar.Caption :=  'Salvar';
   PageControl1.ActivePage:=tabEdicao;
+
 end;
 
 procedure TfrmPadrao.btnSalvarClick(Sender: TObject);
